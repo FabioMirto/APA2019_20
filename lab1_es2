@@ -39,7 +39,7 @@ int main(void) {
      }
       i = 0;
      lun = 0;
-     while(fgets(riga, CHAR + 1, fp1) != NULL){
+     while(fgets(&riga[i], CHAR + 1, fp1) != NULL){
              for(i = 0; i < strlen(riga); i++){
                  flag = 0;
                  for(j = 0; j < num; j++) {
