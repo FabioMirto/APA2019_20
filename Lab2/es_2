@@ -5,7 +5,6 @@
 
 #define MAX 20
 #define CHAR 30
-#define ORA 5
 #define MAXD 1000
 
 typedef enum{
@@ -26,12 +25,17 @@ typedef struct{
 
 comandi_e leggiComando (void);
 void elencaData(dat dati[], int len);
-
-
+void elencaCorsePartenza(dat dati[], int len);
+void elencaCorseCapolinea(dat dati[], int len);
+void elencaRitardo(dat dati[], int len);
+void elencaRitardoTot(dat dati[], int len);
 
 int main() {
-    int i = 0, j, continua = 1, lenght = 0, k;
+    int i = 0, continua = 1, lenght = 0;
     FILE *fp = fopen("corse.txt", "r");
+   /* char tabella[r_fine][MAX] = {
+            "date", "partenza", "capolinea", "ritardo", "ritardo_tot"
+    }; */
     comandi_e codiceComando;
     dat dati[MAXD];
     while(fscanf(fp, "%d %s %s %d/%d/%d %s %s %d",&dati[i].codiceTratta, dati[i].partenza, dati[i].destinazione,
@@ -49,13 +53,13 @@ while(continua) {
     switch (codiceComando) {
         case r_date: elencaData(dati, lenght);
             break;
-        case r_partenza: //elencaCorsePartenza()
+        case r_partenza: elencaCorsePartenza(dati, lenght);
             break;
-        case r_capolinea: //elencaCorseCapolinea()
+        case r_capolinea: elencaCorseCapolinea(dati, lenght);
             break;
-        case r_ritardo: //elencaRitardo()
+        case r_ritardo: elencaRitardo(dati, lenght);
             break;
-        case r_ritardo_tot: //elencaRitardoTot()
+        case r_ritardo_tot: elencaRitardoTot(dati, lenght);
             break;
         case r_fine: (continua = 0);
             break;
@@ -76,8 +80,13 @@ comandi_e leggiComando (void){
     char tabella[r_fine][MAX] = {
             "date", "partenza", "capolinea", "ritardo", "ritardo_tot"
     };
-    printf("comando (date/partenza/capolinea\n"
-           "/ritardo/ritardo_tot/fine per terminare)");
+    printf("[COMANDO]\n"
+           "Date\n"
+           "Partenza\n"
+           "Capolinea\n"
+           "Ritardo\n"
+           "Ritardo_tot\n"
+           "Fine per terminare\n");
     scanf("%s", cmd);
     len = strlen(cmd);
     for(i = 0; i < len; i++) {
@@ -89,29 +98,81 @@ comandi_e leggiComando (void){
     return (c);
 }
 
-
- void elencaData(dat dati[], int len) {
-    int g1, m1, a1, g2, m2, a2, i;
-    printf("digita l'intervallo di date (con formato gg/mm/aaaa) per elencare le corse\n");
-    scanf("%d/%d/%d %d/%d/%d", &g1, &m1, &a1, &g2, &m2, &a2);
-    if( a1<a2 || (a1==a2 && m1<m2) || (a1==a2 && m1==m2 && g1<g2)){
-        for (i = 0; i < len; i++) {
-                if((dati[i].aaaa < a2 || (dati[i].aaaa == a2 && dati[i].mm < m2) || (dati[i].aaaa == a2 && dati[i].mm == m2 && dati[i].gg < g2)) &&
-                   (dati[i].aaaa > a1 || (dati[i].aaaa == a1 && dati[i].mm > m1) || (dati[i].aaaa == a1 && dati[i].mm == m1 && dati[i].gg > g1))){
-                    printf("%d %s %s %d/%d/%d %s %s %d\n", dati[i].codiceTratta, dati[i].partenza, dati[i].destinazione,
-                           dati[i].gg, dati[i].mm, dati[i].aaaa, dati[i].oraPartenza, dati[i].oraArrivo, dati[i].ritardo);
+        void elencaData(dat dati[], int len) {
+            int g1, m1, a1, g2, m2, a2, i;
+            printf("digita l'intervallo di date (con formato gg/mm/aaaa) per elencare le corse\n");
+            scanf("%d/%d/%d %d/%d/%d", &g1, &m1, &a1, &g2, &m2, &a2);
+            if (a1 < a2 || (a1 == a2 && m1 < m2) || (a1 == a2 && m1 == m2 && g1 < g2)) {
+                for (i = 0; i < len; i++) {
+                    if ((dati[i].aaaa < a2 || (dati[i].aaaa == a2 && dati[i].mm < m2) ||
+                         (dati[i].aaaa == a2 && dati[i].mm == m2 && dati[i].gg < g2)) &&
+                        (dati[i].aaaa > a1 || (dati[i].aaaa == a1 && dati[i].mm > m1) ||
+                         (dati[i].aaaa == a1 && dati[i].mm == m1 && dati[i].gg > g1))) {
+                        printf("%d %s %s %d/%d/%d %s %s %d\n", dati[i].codiceTratta, dati[i].partenza,
+                               dati[i].destinazione,
+                               dati[i].gg, dati[i].mm, dati[i].aaaa, dati[i].oraPartenza, dati[i].oraArrivo,
+                               dati[i].ritardo);
+                    }
                 }
-
-
+            } else {
+                for (i = 0; i < len; i++) {
+                    if ((dati[i].aaaa > a2 || (dati[i].aaaa == a2 && dati[i].mm > m2) ||
+                         (dati[i].aaaa == a2 && dati[i].mm == m2 && dati[i].gg > g2)) &&
+                        (dati[i].aaaa < a1 || (dati[i].aaaa == a1 && dati[i].mm < m1) ||
+                         (dati[i].aaaa == a1 && dati[i].mm == m1 && dati[i].gg < g1))) {
+                        printf("%d %s %s %d/%d/%d %s %s %d\n", dati[i].codiceTratta, dati[i].partenza,
+                               dati[i].destinazione,
+                               dati[i].gg, dati[i].mm, dati[i].aaaa, dati[i].oraPartenza, dati[i].oraArrivo,
+                               dati[i].ritardo);
+                    }
+                }
+            }
+        }
+void elencaCorsePartenza(dat dati[], int len) {
+        char partenza[CHAR];
+        int i;
+        printf("digita una città di partenza per elencare tutte le corse partite da questa citta'");
+        scanf("%s", partenza);
+        for (i = 0; i < len; i++) {
+            if (strcmp(partenza, dati[i].partenza) == 0) {
+                printf("%d %s %s %d/%d/%d %s %s %d\n", dati[i].codiceTratta, dati[i].partenza, dati[i].destinazione,
+                       dati[i].gg, dati[i].mm, dati[i].aaaa, dati[i].oraPartenza, dati[i].oraArrivo, dati[i].ritardo);
+            }
         }
     }
-    else
-    {
-        printf("La prima data %d/%d/%d "
-               "SEGUE la seconda %d/%d/%d\n",
-               g1, m1, a1, g2, m2, a2) ;
+
+void elencaCorseCapolinea(dat dati[], int len) {
+        char capolinea[CHAR];
+        int i;
+        printf("digita una città di arrivo per elencare tutte le corse arrivate in questa citta'");
+        scanf("%s", capolinea);
+        for (i = 0; i < len; i++) {
+            if (strcmp(capolinea, dati[i].destinazione) == 0) {
+                printf("%d %s %s %d/%d/%d %s %s %d\n", dati[i].codiceTratta, dati[i].partenza, dati[i].destinazione,
+                       dati[i].gg, dati[i].mm, dati[i].aaaa, dati[i].oraPartenza, dati[i].oraArrivo, dati[i].ritardo);
+            }
+        }
     }
 
 
+void elencaRitardo(dat dati[], int len) {
+        int i;
+        for (i = 0; i < len; ++i) {
+            if (dati[i].ritardo != 0) {
+                printf("%d %s %s %d/%d/%d %s %s %d\n", dati[i].codiceTratta, dati[i].partenza, dati[i].destinazione,
+                       dati[i].gg, dati[i].mm, dati[i].aaaa, dati[i].oraPartenza, dati[i].oraArrivo, dati[i].ritardo);
+            }
+        }
+    }
 
-}
+void elencaRitardoTot(dat dati[], int len) {
+        int i, ritardo_tot = 0, codiceTratta;
+        printf("digita il codice di una tratta per sapere il ritardo complessivo su quella tratta");
+        scanf("%d", &codiceTratta);
+        for (i = 0; i < len; i++) {
+            if (codiceTratta == dati[i].codiceTratta) {
+                ritardo_tot += dati[i].ritardo;
+            }
+        }
+        printf("%d\n", ritardo_tot);
+    }
