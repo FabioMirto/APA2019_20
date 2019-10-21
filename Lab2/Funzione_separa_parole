@@ -1,0 +1,25 @@
+#include <stdio.h>
+ #include <stdlib.h>
+ #include <string.h>
+ #include <ctype.h>
+ 
+ 
+ 
+ 
+int main()
+{
+	int i;
+	char V[25] = {"all'esempio"};
+	char S[25];
+	
+       printf("%s\n", V);
+	for(i=0; i<strlen(V); i++){
+	if(isalnum(V[i]) != 0 && ispunct(V[i+1]) != 0 && isalnum(V[i+2]) != 0){
+	    strcpy(S, &V[i+2]);
+	    }
+	    }
+	    printf ("%s", S);
+	
+	return 0;
+}
+ 
