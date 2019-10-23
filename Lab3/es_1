@@ -1,0 +1,92 @@
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
+
+#define MAXR 50
+#define NOME_FILE "mappa.txt"
+
+typedef struct {
+    int x, y, b, h, Area;
+    int estremo_x, estremo_y;
+} val;
+
+int trovaBase(int mappa[MAXR][MAXR], int i, int j, int c);
+int trovaAltezza(int mappa[MAXR][MAXR], int i, int j, int r);
+void leggiMatrice(int M[MAXR][MAXR], int * nr, int * nc);
+int riconosciRegione(int M[MAXR][MAXR], int nr, int nc, int r, int c,int* b, int* h);
+
+int main() {
+    int M[MAXR][MAXR];
+    int r, c, i, j,  base, altezza, maxbase = 0, maxaltezza = 0, area = 0, maxarea = 0;
+    int nr, nc, *b, *h;
+    val valori[10];
+    FILE *fp;
+    fp = fopen(NOME_FILE, "r");
+    if(fp == NULL){
+        printf("ERRORE NELL'APERTURA FILE");
+        return -1;
+    }
+
+   leggiMatrice(M, &r, &c);
+    for(i = 0; i < r; i++) {
+        for (j = 0; j < c; j++) {
+        printf("%d ", M[i][j]);
+        }
+        printf("\n");
+    }
+    for(i = 0; i < r; i++) {
+        for (j = 0; j < c; j++) {
+            if(riconosciRegione(M,nr,nc,r,c, &b, &h)){
+            }
+        }
+    printf("Max Base: estr. sup. SX=<%d,%d> b=%d, h=%d, Area=%d\n", valori[0].x,valori[0].y, valori[0].b, valori[0].h, valori[0].Area);
+    printf("Max Altezza: estr. sup. SX=<%d,%d> b=%d, h=%d, Area=%d\n", valori[1].x,valori[1].y, valori[1].b, valori[1].h, valori[1].Area);
+    printf("Max Area: estr. sup. SX=<%d,%d> b=%d, h=%d, Area=%d\n", valori[2].x,valori[2].y, valori[2].b, valori[2].h, valori[2].Area);
+
+    return 0;
+}
+
+void leggiMatrice(int M[MAXR][MAXR], int * nr, int * nc){
+    FILE *fp;
+    int i, j;
+    fp = fopen(NOME_FILE, "r");
+         fscanf(fp, "%d %d", nr, nc);
+    for (i = 0; i < *nr; ++i) {
+        for (j = 0; j < *nc; ++j) {
+            fscanf(fp, "%d", &M[i][j]);
+        }
+    }
+
+}
+
+int trovaBase(int mappa[MAXR][MAXR], int i, int j, int c) {
+    int k, base = 1;
+    for (k = 1; k < c - j; k++) {
+        if (mappa[i][j+k] != 0) {
+            base++;
+        } else{
+            break;
+        }
+
+    }
+
+    return base;
+}
+int trovaAltezza(int mappa[MAXR][MAXR], int i, int j, int r) {
+    int k, altezza = 1;
+    for (k = 1; k < r - i; k++) {
+        if (mappa[i+k][j] != 0) {
+            altezza++;
+        } else{
+            break;
+        }
+
+    }
+
+    return altezza;
+}
+
+    int riconosciRegione(int M[MAXR][MAXR], int nr, int nc, int r, int c,int* b, int* h){
+      bool flag = true;
+
+    }
