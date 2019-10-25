@@ -1,8 +1,7 @@
 #include <stdio.h>
 #include <string.h>
 
-#define N1 50
-#define N2 50
+#define MAX 50
 #define NOME_FILE "mappa.txt"
 
 typedef struct {
@@ -10,11 +9,11 @@ typedef struct {
     int estremo_x, estremo_y;
 } val;
 
-int trovaBase(int mappa[N1][N2], int i, int j, int c);
-int trovaAltezza(int mappa[N1][N2], int i, int j, int r);
+int trovaBase(int mappa[MAX][MAX], int i, int j, int c);
+int trovaAltezza(int mappa[MAX][MAX], int i, int j, int r);
 
 int main() {
-    int mappa[N1][N2];
+    int mappa[MAX][MAX];
     int r, c, i, j,  base, altezza, maxbase = 0, maxaltezza = 0, area = 0, maxarea = 0;
     val valori[10];
     FILE *fp;
@@ -65,33 +64,35 @@ int main() {
     printf("Max Base: estr. sup. SX=<%d,%d> b=%d, h=%d, Area=%d\n", valori[0].x,valori[0].y, valori[0].b, valori[0].h, valori[0].Area);
     printf("Max Altezza: estr. sup. SX=<%d,%d> b=%d, h=%d, Area=%d\n", valori[1].x,valori[1].y, valori[1].b, valori[1].h, valori[1].Area);
     printf("Max Area: estr. sup. SX=<%d,%d> b=%d, h=%d, Area=%d\n", valori[2].x,valori[2].y, valori[2].b, valori[2].h, valori[2].Area);
-    
+
     return 0;
 }
 
 
-int trovaBase(int mappa[N1][N2], int i, int j, int c) {
-    int k, base = 1;
-    for (k = 1; k < c - j; k++) {
-            if (mappa[i][j+k] != 0) {
-                base++;
-            } else{
-                break;
-            }
-
+int trovaBase(int mappa[MAX][MAX], int i, int j, int c) {
+    int k = 1, base = 1;
+    c = c -1;
+    while(k < c){
+        if (mappa[i][j+k] != 0) {
+            base++;
+        } else{
+            break;
+        }
+        k++;
     }
 
-return base;
+    return base;
 }
-int trovaAltezza(int mappa[N1][N2], int i, int j, int r) {
-    int k, altezza = 1;
-    for (k = 1; k < r - i; k++) {
+int trovaAltezza(int mappa[MAX][MAX], int i, int j, int r) {
+    int k = 1 , altezza = 1;
+    r = r -1;
+    while(k < r){
         if (mappa[i+k][j] != 0) {
             altezza++;
         } else{
             break;
         }
-
+        k++;
     }
 
     return altezza;
