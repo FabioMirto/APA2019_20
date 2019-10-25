@@ -20,7 +20,7 @@ typedef struct {
 }  dizionario;
 
 
-int main(void) {
+int main() {
     FILE *fp1, *fp2, *fp3;
     dizionario diz[S];
     int num, i, k, flag, j, lun;
@@ -39,12 +39,12 @@ int main(void) {
      }
       i = 0;
      lun = 0;
-     while(fgets(&riga[i], CHAR + 1, fp1) != NULL){
+     while(fgets(riga, CHAR + 1, fp1) != NULL){
              for(i = 0; i < strlen(riga); i++){
                  flag = 0;
                  for(j = 0; j < num; j++) {
                          lun = strlen(diz[j].originale);
-                         if (strncmp(riga, diz[j].originale, lun) == 0) {
+                         if (strncmp(&riga[i], diz[j].originale, lun) == 0) {
                              flag = 1;
                              break;
                          }
