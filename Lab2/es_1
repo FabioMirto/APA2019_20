@@ -6,7 +6,6 @@
 
 typedef struct {
     int x, y, b, h, Area;
-    int estremo_x, estremo_y;
 } val;
 
 int trovaBase(int mappa[MAX][MAX], int i, int j, int c);
