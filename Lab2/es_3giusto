@@ -16,21 +16,14 @@ typedef struct {
 
 typedef struct {
     char parola[PAR+1];
-}test ;
+} test;
 
-typedef struct {
-    char parola[PAR+1];
-    char par[PAR+1];
-    int position;
-}out ;
 
 int main() {
-    int i = 0, j, k, p, prova, l, m, num = 0, countTot = 0, countPunct = 0, countWords = 0, len = 0, lun = 0, lung = 0;
-    char riga[26], parola[26];
-    char ch;
+    int i = 0, j, p, l, m = 0, num = 0, countWords = 0, len = 0;
+    char riga[PAR+1], parola[PAR+1];
     test testo[RIGA];
     dat dati[MAX];
-    out output[100];
     FILE *fp1, *fp2;
     fp1 = fopen(NOME_FILE1, "r");
     fp2 = fopen(NOME_FILE2, "r");
@@ -39,16 +32,15 @@ int main() {
         printf("ERRORE NELL'APERTURA DEL FILE");
         EXIT_FAILURE;
     }
+
     fscanf(fp1, "%d", &num);
     for (i = 0; i < num; i++) {
         fscanf(fp1, "%s", dati[i].sequenza);
-        lung = strlen(dati[i].sequenza);
-        for (int l = 0; l < lung; l++) {
+        len = strlen(dati[i].sequenza);
+        for (l = 0; l < len; l++) {
             dati[i].sequenza[l] = tolower(dati[i].sequenza[l]);
         }
     }
-    m = 0;
-    i = 0;
     while (!feof(fp2)) {
         fscanf(fp2, "%s", testo[m].parola);
         for (int n = 0; n < strlen(testo[m].parola); n++) {
@@ -68,7 +60,6 @@ int main() {
         }
         m++;
     }
-p = 0;
     for (l = 0; l < num; l++) {
         p=0;
         for (j = 0; j < countWords; j++) {
@@ -81,8 +72,7 @@ p = 0;
 
                         }
                     }
-        }
-        }
+                }
+            }
         return 0;
-
 }
