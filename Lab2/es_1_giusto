@@ -64,6 +64,7 @@ int main() {
     printf("Max Altezza: estr. sup. SX=<%d,%d> b=%d, h=%d, Area=%d\n", valori[1].x,valori[1].y, valori[1].b, valori[1].h, valori[1].Area);
     printf("Max Area: estr. sup. SX=<%d,%d> b=%d, h=%d, Area=%d\n", valori[2].x,valori[2].y, valori[2].b, valori[2].h, valori[2].Area);
 
+    fclose(fp);
     return 0;
 }
 
