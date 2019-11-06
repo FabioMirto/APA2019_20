@@ -43,7 +43,7 @@ int main() {
     dat dati[MAXD];
     while(fscanf(fp, "%d %s %s %d/%d/%d %s %s %d",&dati[i].codiceTratta, dati[i].partenza, dati[i].destinazione,
                  &dati[i].gg, &dati[i].mm, &dati[i].aaaa, dati[i].oraPartenza, dati[i].oraArrivo, &dati[i].ritardo) != EOF){
-        dati[i].dataInt = dati[i].aaaa * 10000 + dati[i].mm * 100 + dati[i].gg;
+        dati[i].dataInt = dati[i].aaaa * 10000 + dati[i].mm * 100 + dati[i].gg; //da sistemare
         lenght++;
         i++;
     }
