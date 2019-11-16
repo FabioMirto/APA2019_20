@@ -7,7 +7,7 @@
 #define CHAR 30
 
 typedef enum{
-    r_date, r_partenza, r_capolinea, r_codicetratta, r_ricerca, r_lettura, r_fine, r_err
+   r_date, r_partenza, r_capolinea, r_codicetratta, r_ricerca, r_lettura, r_stampa, r_fine, r_err
 } comandi_e;
 
 typedef struct{
@@ -21,77 +21,39 @@ typedef struct{
     char oraArrivo[CHAR];
     int ritardo;
     int dataInt;
+    int len;
 } dat;
 
 comandi_e leggiComando (void);
 void minuscolo(char parola[CHAR]);
-void selezionaDati(comandi_e codiceComando, dat *dati, int lenght, FILE *fp, int verifica);
+void selezionaDati(comandi_e codiceComando, dat *dati, int lenght, FILE *fp);
 int ricercaLineare(dat dati[], int lenght, char par[30]);
 int ricercaDicotomica(dat dati[], int lenght, char par[30]);
 void stampaPuntatore(dat **dati1, int lenght);
 void stampaPuntatoreDate(dat **dati1, int lenght);
-void leggiFile(FILE *fp, dat *dati, char *name, int verifica);
+dat *leggiFile(int *len, dat *dati);
 
 int main() {
-    int m = 0, i, lenght = 0, stamp = 0, verifica = 0;
+    int m = 0, i, lenght, stamp = 0, verifica = 0;
     FILE *fp = fopen("corse.txt", "r");
-    FILE *fp1 = fopen("log.txt", "w");
-    FILE *fp2 = fopen("lettura.txt", "w");
-    char *name;
+    FILE *fp1;
+    FILE *fp2;
     if(fp == NULL){
         printf("ERRORE NELL'APERTURA DEL FILE");
         EXIT_FAILURE;
     }
     comandi_e codiceComando;
-    dat *dati;
-   verifica = 0;
-    printf("Inserisci il nome del file\n");
-    scanf("%s", name);
-    leggiFile(fp, dati, name, verifica);
+    dat *dati = leggiFile(&lenght, NULL);
 
-
- /*   fscanf(fp, "%d", &lenght);
-    dati = calloc(lenght, sizeof(dat));
-    for(i = 0; i < lenght; i++){
-        fscanf(fp, "%d %s %s %d/%d/%d %s %s %d",&dati[i].codiceTratta, dati[i].partenza, dati[i].destinazione,
-               &dati[i].gg, &dati[i].mm, &dati[i].aaaa, dati[i].oraPartenza, dati[i].oraArrivo, &dati[i].ritardo);
-        dati[i].dataInt = dati[i].aaaa * 10000 + dati[i].mm * 100 + dati[i].gg;
-    }
-
-    for(m = 0; m < 13; m++){
-        printf( "%d %s %s %d/%d/%d %s %s %d\n",dati[m].codiceTratta, dati[m].partenza, dati[m].destinazione,
-                dati[m].gg, dati[m].mm, dati[m].aaaa, dati[m].oraPartenza, dati[m].oraArrivo, dati[m].ritardo);
-    }*/
-    printf("per stampare i contenuti del log\n"
-           "premere 1 per stampare su video\n"
-           "premere 0 per stampare su file\n");
-
-    scanf("%d", &stamp);
-    if(stamp == 0){
-        for (int k = 0; k < lenght; k++) {
-            fprintf(fp1, "%d %s %s %d/%d/%d %s %s %d\n",dati[k].codiceTratta, dati[k].partenza, dati[k].destinazione,
-                    dati[k].gg, dati[k].mm, dati[k].aaaa, dati[k].oraPartenza, dati[k].oraArrivo, dati[k].ritardo);
-        }
-    } else {
-        for (int k = 0; k < lenght; k++) {
-            printf( "%d %s %s %d/%d/%d %s %s %d\n",dati[k].codiceTratta, dati[k].partenza, dati[k].destinazione,
-                    dati[k].gg, dati[k].mm, dati[k].aaaa, dati[k].oraPartenza, dati[k].oraArrivo, dati[k].ritardo);
-        }
-    }
-
-
-    fclose(fp);
-    fclose(fp1);
-
-    selezionaDati(codiceComando, dati, lenght, fp2, verifica);
+    selezionaDati(codiceComando, dati, lenght, fp1);
 
     return 0;
 }
-void selezionaDati(comandi_e codiceComando, dat *dati, int lenght, FILE *fp, int verifica){
+void selezionaDati(comandi_e codiceComando, dat *dati, int lenght, FILE *fp){
     int i = 0, j = 0, l = 0, r = lenght - 1, k = 0, continua = 1, ricerca, m;
     int dataInt[lenght];
-    int temp;
-    char tempt[30], par[30], *name;
+    int temp, stamp = 0;
+    char tempt[30], par[30];
 
     dat **date, **partenza, **destinazione, **codice_tratta;
 
@@ -106,6 +68,25 @@ void selezionaDati(comandi_e codiceComando, dat *dati, int lenght, FILE *fp, int
     while(continua) {
         codiceComando = leggiComando();
         switch (codiceComando) {
+            case r_stampa:
+                printf("per stampare i contenuti del log\n"
+                       "premere 1 per stampare su video\n"
+                       "premere 0 per stampare su file\n");
+                scanf("%d", &stamp);
+                if(stamp == 0){
+                    fp = fopen("log.txt", "w");
+                    for (k = 0; k < lenght; k++) {
+                        fprintf(fp, "%d %s %s %d/%d/%d %s %s %d\n",dati[k].codiceTratta, dati[k].partenza, dati[k].destinazione,
+                                dati[k].gg, dati[k].mm, dati[k].aaaa, dati[k].oraPartenza, dati[k].oraArrivo, dati[k].ritardo);
+                    }
+                } else {
+                    for (k = 0; k < lenght; k++) {
+                        printf( "%d %s %s %d/%d/%d %s %s %d\n",dati[k].codiceTratta, dati[k].partenza, dati[k].destinazione,
+                                dati[k].gg, dati[k].mm, dati[k].aaaa, dati[k].oraPartenza, dati[k].oraArrivo, dati[k].ritardo);
+                        printf("%d\n", dati[k].dataInt);
+                    }
+                }
+                break;
             case r_date:
                 for (k = 0; k < lenght; k++) {
                     date[k]->dataInt = dati[k].aaaa * 10000 + dati[k].mm * 100 + dati[k].gg;
@@ -184,14 +165,15 @@ void selezionaDati(comandi_e codiceComando, dat *dati, int lenght, FILE *fp, int
                 }
                 break;
             case r_lettura :
-                verifica = 1;
-                printf("Inserisci il nome del file\n");
-                scanf("%s", name);
-                leggiFile(fp, dati, name, verifica);
-                for(m = 0; m < 8; m++){
-                    printf( "%d %s %s %d/%d/%d %s %s %d\n",dati[m].codiceTratta, dati[m].partenza, dati[m].destinazione,
+                if (dati != NULL)
+                    free(dati);
+                dati = leggiFile(&lenght, dati);
+                for(m = 0; m < lenght; m++){
+                    printf( "%d %s %s %d/%d/%d %s %s %d\n", dati[m].codiceTratta, dati[m].partenza, dati[m].destinazione,
                             dati[m].gg, dati[m].mm, dati[m].aaaa, dati[m].oraPartenza, dati[m].oraArrivo, dati[m].ritardo);
+                    printf("%d\n", dati[m].dataInt);
                 }
+                selezionaDati(codiceComando, dati, lenght, fp);
                 break;
             case r_fine: (continua = 0);
                 break;
@@ -203,13 +185,11 @@ void selezionaDati(comandi_e codiceComando, dat *dati, int lenght, FILE *fp, int
 
 comandi_e leggiComando (void){
     comandi_e c;
-    int len = 0;
-    int i = 0;
     char cmd[MAX];
     char tabella[r_fine][MAX] = {
-            "date", "partenza", "capolinea", "codice_tratta", "ricerca", "lettura"
+            "date", "partenza", "capolinea", "codice_tratta", "ricerca", "lettura", "stampa"
     };
-    printf("[COMANDO]\nDate Partenza Capolinea Codice_Tratta Ricerca Lettura\n"
+    printf("\t\t\t\t\t\t[COMANDO]\nStampa Date Partenza Capolinea Codice_Tratta Ricerca Lettura\n"
            "Fine per terminare\n");
     scanf("%s", cmd);
     minuscolo(cmd);
@@ -220,7 +200,7 @@ comandi_e leggiComando (void){
 }
 
 void minuscolo(char parola[CHAR]){
-    int i, j, len;
+    int i, len;
     len = strlen(parola);
     for(i = 0; i < len; i++){
         parola[i] = tolower(parola[i]);
@@ -264,53 +244,39 @@ void stampaPuntatoreDate(dat **dati1, int lenght){
 void stampaPuntatore(dat **dati1, int lenght){
     int i;
     for(i = 0; i < lenght; i++){
-        printf( "%d %s %s %d/%d/%d %s %s %d\n",dati1[i]->codiceTratta, dati1[i]->partenza, dati1[i]->destinazione,
+        printf( "%d %s %s %d/%d/%d %s %s %d\n", dati1[i]->codiceTratta, dati1[i]->partenza, dati1[i]->destinazione,
                 dati1[i]->gg, dati1[i]->mm, dati1[i]->aaaa, dati1[i]->oraPartenza, dati1[i]->oraArrivo, dati1[i]->ritardo);
     }
 }
 
-void leggiFile(FILE *fp, dat *dati, char *name, int verifica){
-    dat **date, **partenza, **destinazione, **codice_tratta;
-    fp = fopen(name, "r");
-    int i, len;
-    if(verifica == 0) {
-        fscanf(fp, "%d", &len);
-        dati = calloc(len, sizeof(dat));
-        for (i = 0; i < len; i++) {
-            fscanf(fp, "%d %s %s %d/%d/%d %s %s %d", &dati[i].codiceTratta, dati[i].partenza, dati[i].destinazione,
-                   &dati[i].gg, &dati[i].mm, &dati[i].aaaa, dati[i].oraPartenza, dati[i].oraArrivo, &dati[i].ritardo);
-            dati[i].dataInt = dati[i].aaaa * 10000 + dati[i].mm * 100 + dati[i].gg;
-        }
+dat *leggiFile(int *len, dat *dati) {
 
-        date = malloc(len * sizeof(dat *));
-        partenza = malloc(len * sizeof(dat *));
-        destinazione = malloc(len * sizeof(dat *));
-        codice_tratta = malloc(len * sizeof(dat *));
+    FILE *fp;
+    char name[20];
+    dat d_temp;
+    int n = 1, i = 0;
+    printf("Inserire nome file:");
+    scanf("%s", name);
 
-        for (i = 0; i < len; i++) {
-            partenza[i] = destinazione[i] = codice_tratta[i] = date[i] = &dati[i];
-        }
-    } else {
-        free(dati);
-        free(date);
-        free(destinazione); //SIGNAL = SIGABRT (Aborted)
-        free(partenza);
-        free(codice_tratta);
-        fscanf(fp, "%d", &len);
-        dati = calloc(len, sizeof(dat));
-        for (i = 0; i < len; i++) {
-            fscanf(fp, "%d %s %s %d/%d/%d %s %s %d", &dati[i].codiceTratta, dati[i].partenza, dati[i].destinazione,
-                   &dati[i].gg, &dati[i].mm, &dati[i].aaaa, dati[i].oraPartenza, dati[i].oraArrivo, &dati[i].ritardo);
-            dati[i].dataInt = dati[i].aaaa * 10000 + dati[i].mm * 100 + dati[i].gg;
-        }
-
-        date = malloc(len * sizeof(dat *));
-        partenza = malloc(len * sizeof(dat *));
-        destinazione = malloc(len * sizeof(dat *));
-        codice_tratta = malloc(len * sizeof(dat *));
-
-        for (i = 0; i < len; i++) {
-            partenza[i] = destinazione[i] = codice_tratta[i] = date[i] = &dati[i];
-        }
+    if ((fp = fopen(name, "r")) == NULL) {
+        printf("Errore apertura file");
+        exit(99);
     }
+
+    dati = malloc(n * sizeof(dat));
+
+    while (fscanf(fp, "%d %s %s %d/%d/%d %s %s %d",&d_temp.codiceTratta, d_temp.partenza, d_temp.destinazione,
+                  &d_temp.gg, &d_temp.mm, &d_temp.aaaa, d_temp.oraPartenza, d_temp.oraArrivo, &d_temp.ritardo) != EOF) {
+        d_temp.dataInt = d_temp.aaaa*10000 + d_temp.mm * 100 + d_temp.gg;
+        if (i == n) {
+            n = 2 * n;
+            dati = realloc(dati, n * sizeof(dat));
+        }
+        dati[i++] = d_temp;
+    }
+    *len = i;
+
+    fclose(fp);
+
+    return dati;
 }
