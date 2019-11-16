@@ -30,7 +30,7 @@ void selezionaDati(comandi_e codiceComando, dat *dati, int lenght, FILE *fp);
 int ricercaLineare(dat dati[], int lenght, char par[30]);
 int ricercaDicotomica(dat dati[], int lenght, char par[30]);
 void stampaPuntatore(dat **dati1, int lenght);
-void stampaPuntatoreDate(dat **dati1, int lenght);
+void ordinamento(dat **dati1, int i, int j);
 dat *leggiFile(int *len, dat *dati);
 
 int main() {
@@ -52,7 +52,8 @@ int main() {
 void selezionaDati(comandi_e codiceComando, dat *dati, int lenght, FILE *fp){
     int i = 0, j = 0, l = 0, r = lenght - 1, k = 0, continua = 1, ricerca, m;
     int dataInt[lenght];
-    int temp, stamp = 0;
+    dat *temp;
+    int stamp = 0;
     char tempt[30], par[30];
 
     dat **date, **partenza, **destinazione, **codice_tratta;
@@ -94,29 +95,23 @@ void selezionaDati(comandi_e codiceComando, dat *dati, int lenght, FILE *fp){
                 for (i = l; i < r; i++) {
                     for (j = l; j < r - i + l; j++) {
                         if (date[j]->dataInt > date[j+1]->dataInt) {
-                            temp = date[j]->dataInt;
-                            date[j]->dataInt = date[j+1]->dataInt;
-                            date[j+1]->dataInt = temp;
+                            ordinamento(date, i, j);
                         } else if (dataInt[j] == dataInt[j + 1]) {
                             if (strcmp(date[j]->oraPartenza, date[j + 1]->oraPartenza) > 0) {
-                                strcpy(tempt, date[j]->oraPartenza);
-                                strcpy(date[j]->oraPartenza, date[j + 1]->oraPartenza);
-                                strcpy(date[j + 1]->oraPartenza, tempt);
+                                ordinamento(date, i, j);
                             }
                         }
 
                     }
                 }
-                stampaPuntatoreDate(date, lenght);
+                stampaPuntatore(date, lenght);
                 break;
             case r_partenza:
                 ricerca = 1;
                 for (i = l; i < r; i++) {
                     for (j = l; j < r - i + l; j++) {
                         if (strcmp(partenza[j]->partenza, partenza[j + 1]->partenza) > 0) {
-                            strcpy(tempt, partenza[j]->partenza);
-                            strcpy(partenza[j]->partenza, partenza[j + 1]->partenza);
-                            strcpy(partenza[j + 1]->partenza, tempt);
+                            ordinamento(partenza, i, j);
                         }
                     }
                 }
@@ -127,9 +122,7 @@ void selezionaDati(comandi_e codiceComando, dat *dati, int lenght, FILE *fp){
                 for (i = l; i < r; i++) {
                     for (j = l; j < r - i + l; j++) {
                         if (strcmp(destinazione[j]->destinazione, destinazione[j + 1]->destinazione) > 0) {
-                            strcpy(tempt, destinazione[j]->destinazione);
-                            strcpy(destinazione[j]->destinazione, destinazione[j + 1]->destinazione);
-                            strcpy(destinazione[j + 1]->destinazione, tempt);
+                            ordinamento(destinazione, i, j);
                         }
                     }
                 }
@@ -140,9 +133,7 @@ void selezionaDati(comandi_e codiceComando, dat *dati, int lenght, FILE *fp){
                 for (i = l; i < r; i++) {
                     for (j = l; j < r - i + l; j++) {
                         if (codice_tratta[j]->codiceTratta > codice_tratta[j + 1]->codiceTratta) {
-                            temp = codice_tratta[j]->codiceTratta;
-                            codice_tratta[j]->codiceTratta = codice_tratta[j + 1]->codiceTratta;
-                            codice_tratta[j + 1]->codiceTratta = temp;
+                            ordinamento(codice_tratta, i, j);
                         }
                     }
                 }
@@ -233,14 +224,6 @@ int ricercaDicotomica(dat dati[], int lenght, char par[30]){
     return -1;
 }
 
-void stampaPuntatoreDate(dat **dati1, int lenght){
-    int i;
-    for(i = 0; i < lenght; i++){
-        printf( "%d %s %s %d %s %s %d\n",dati1[i]->codiceTratta, dati1[i]->partenza, dati1[i]->destinazione,
-                dati1[i]->dataInt, dati1[i]->oraPartenza, dati1[i]->oraArrivo, dati1[i]->ritardo);
-    }
-}
-
 void stampaPuntatore(dat **dati1, int lenght){
     int i;
     for(i = 0; i < lenght; i++){
@@ -279,4 +262,11 @@ dat *leggiFile(int *len, dat *dati) {
     fclose(fp);
 
     return dati;
+}
+
+void ordinamento(dat **dati1, int i, int j){
+    dat *temp;
+    temp = dati1[j];
+    dati1[j] = dati1[j+1];
+    dati1[j+1] = temp;
 }
