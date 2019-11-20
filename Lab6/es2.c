@@ -10,13 +10,13 @@ typedef enum{
 
 typedef struct{
     char codice[6];
-    char nome[MAX];
-    char cognome[MAX];
+    char nome[MAX+1];
+    char cognome[MAX+1];
     int gg;
     int mm;
     int aaaa;
-    char via[MAX];
-    char citta[MAX];
+    char via[MAX+1];
+    char citta[MAX+1];
     int cap;
     int dataInt;
 } Item;
@@ -30,17 +30,19 @@ struct node {
 
 
 comandi_e leggiComando (void);
-void minuscolo(char parola[MAX]);
+void minuscolo(char parola[MAX+1]);
 link SortListIns(link h, Item val);
 link newNode(Item val, link next);
-Item LISTsearch(link l, char *code);
+Item LISTsearch(link l, char *code, Item *t);
 Item ITEMnull();
 link SortListDel(link h, char *code);
-void LISTprint(link l, FILE *fp, Item t);
+void LISTprint(link l, Item *t);
+link SortListDelDate(link h, int dataIn1, int dataIn2);
 
 int main() {
     int continua = 1;
-    char s[200], code[51];
+    int g1, g2, m1, m2, a1, a2, data1, data2, tmp;
+    char s[200], code[MAX+1];
     Item *t;
     link h, l, p;
     FILE *fp = fopen("item.txt", "r");
@@ -57,36 +59,45 @@ int main() {
                 printf("inserisci nuovo elemento ");
                 scanf("%s %s %s %d/%d/%d %s %s %d", t->codice, t->nome, t->cognome, &t->gg, &t->mm, &t->aaaa, t->via, t->citta, &t->cap);
                 t->dataInt = t->aaaa * 10000 + t->mm * 100 + t->gg;
-                printf("%s %s %s %d/%d/%d %s %s %d\n", t->codice, t->nome, t->cognome, t->gg, t->mm, t->aaaa, t->via, t->citta, t->cap);
                 if(t->dataInt != 0){
                     SortListIns(h, *t);
                 }
+                LISTprint(h, t);
                 break;
             case r_insertion_b:
                 fscanf(fp, "%s %s %s %d/%d/%d %s %s %d", t->codice, t->nome, t->cognome, &t->gg, &t->mm, &t->aaaa, t->via, t->citta, &t->cap);
                 t->dataInt = t->aaaa * 10000 + t->mm * 100 + t->gg;
-                printf("%s %s %s %d/%d/%d %s %s %d\n", t->codice, t->nome, t->cognome, t->gg, t->mm, t->aaaa, t->via, t->citta, t->cap);
                 if(t->dataInt != 0){
                     SortListIns(h, *t);
                 }
+                LISTprint(h, t);
                 break;
             case r_search:
                 printf("Inserisci codice da cercare ");
                 scanf("%s", code);
-                *t = LISTsearch(h, code);
-                if(t->dataInt != 0){
-                    printf("%s %s %s %d/%d/%d %s %s %d\n", t->codice, t->nome, t->cognome, t->gg, t->mm, t->aaaa, t->via, t->citta, t->cap);
-                }
+                LISTsearch(h, code, t);
                 break;
             case r_deletecode:
                 printf("Inserisci codice da cancellare dalla lista\n");
                 scanf("%s", code);
                 SortListDel(h, code);
-                LISTprint(l, fp, *t);
+                LISTprint(h, t);
                 break;
             case r_deletedate:
+                printf("Inserisci intervallo di date da cancellare dalla lista (FORMATO gg/mm/aaaa)\n");
+                scanf("%d/%d/%d %d/%d/%d", &g1, &m1, &a1, &g2, &m2, &a2);
+                data1 = a1*10000+m1*100+g1;
+                data2 = a2*10000+m2*100+g2;
+                if(data1 > data2){
+                    tmp = data1;
+                    data1 = data2;
+                    data2 = tmp;
+                }
+                SortListDelDate(h, data1, data2);
+                LISTprint(h, t);
                 break;
             case r_print:
+                LISTprint(h, t);
                 break;
             case r_fine: (continua = 0);
                 break;
@@ -94,7 +105,6 @@ int main() {
             default: printf("comando errato\n");
         }
     }
-    LISTprint(l, fp, *t);
     return 0;
 }
 
@@ -124,7 +134,6 @@ void minuscolo(char parola[MAX]){
     }
 }
 
-
 link SortListIns(link h, Item val) {
     link x, p;
     if (h==NULL || h->next > val.dataInt)
@@ -146,11 +155,13 @@ link newNode(Item val, link next) {
     return x;
 }
 
-Item LISTsearch(link l, char *code){
+Item LISTsearch(link l, char *code, Item *t){
     link x;
-    for(x = l; x != NULL && strcmp(code, x->val.codice); x = x->next);
-    if(x != NULL)
+    for(x = l; x != NULL && code == x->val.codice; x = x->next);
+    if(x != NULL) {
+            LISTprint(l, t);
         return x->val;
+    }
     return ITEMnull();
 }
 
@@ -177,10 +188,27 @@ link SortListDel(link h, char *code) {
     return h;
 }
 
-void LISTprint(link l, FILE *fp, Item t){
+void LISTprint(link l,Item *t){
     link x;
     for(x = l; x != NULL; x = x->next){
-        printf("%s %s %s %02d/%02d/%04d %s %s %d\n", t.codice, t.nome, t.cognome, t.gg, t.mm,
-                t.aaaa, t.via, t.citta, t.cap);
+        printf("%s %s %s %02d/%02d/%04d %s %s %d\n", t->codice, t->nome, t->cognome, t->gg, t->mm,
+                t->aaaa, t->via, t->citta, t->cap);
     }
+}
+
+link SortListDelDate(link h, int dataIn1, int dataIn2){
+    link x, p;
+    if (h == NULL)
+        return NULL;
+    for (x=h, p=NULL; x!=NULL && dataIn1 != x->val.dataInt && dataIn2 != x->val.dataInt; p=x, x=x->next) {
+        if (dataIn1 < x->val.dataInt && dataIn2 > x->val.dataInt){
+            if (x==h)
+                h = x->next;
+            else
+                p->next = x->next;
+            free(x);
+            break;
+        }
+    }
+    return h;
 }
