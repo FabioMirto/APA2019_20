@@ -27,7 +27,7 @@ typedef struct{
 comandi_e leggiComando (void);
 void minuscolo(char parola[CHAR]);
 void selezionaDati(comandi_e codiceComando, dat *dati, int lenght, FILE *fp);
-int ricercaLineare(dat dati[], int lenght, char par[30]);
+void ricercaLineare(dat dati[], int lenght, char par[30]);
 int ricercaDicotomica(dat dati[], int lenght, char par[30]);
 void stampaPuntatore(dat **dati1, int lenght);
 void ordinamento(dat **dati1, int i, int j);
@@ -50,11 +50,10 @@ int main() {
     return 0;
 }
 void selezionaDati(comandi_e codiceComando, dat *dati, int lenght, FILE *fp){
-    int i = 0, j = 0, l = 0, r = lenght - 1, k = 0, continua = 1, ricerca, m;
+    int i = 0, j = 0, l = 0, r = lenght - 1, k = 0, continua = 1, ricerca = 0, m;
     int dataInt[lenght];
-    dat *temp;
     int stamp = 0;
-    char tempt[30], par[30];
+    char par[30];
 
     dat **date, **partenza, **destinazione, **codice_tratta;
 
@@ -144,16 +143,17 @@ void selezionaDati(comandi_e codiceComando, dat *dati, int lenght, FILE *fp){
                 scanf("%s", par);
                 minuscolo(par);
                 if(ricerca == 0){
-                    m = ricercaLineare(dati, lenght, par);
-                } else{
+                    ricercaLineare(dati, lenght, par);
+                } else {
                     m = ricercaDicotomica(dati, lenght, par);
+                    if(m != -1){
+                        printf( "%d %s %s %d/%d/%d %s %s %d\n",dati[m].codiceTratta, dati[m].partenza, dati[m].destinazione,
+                                dati[m].gg, dati[m].mm, dati[m].aaaa, dati[m].oraPartenza, dati[m].oraArrivo, dati[m].ritardo);
+                    } else{
+                        printf("Stazione di partenza non trovata\n");
+                    }
                 }
-                if(m != -1){
-                    printf( "%d %s %s %d/%d/%d %s %s %d\n",dati[m].codiceTratta, dati[m].partenza, dati[m].destinazione,
-                            dati[m].gg, dati[m].mm, dati[m].aaaa, dati[m].oraPartenza, dati[m].oraArrivo, dati[m].ritardo);
-                } else{
-                    printf("Stazione di partenza non trovata\n");
-                }
+
                 break;
             case r_lettura :
                 if (dati != NULL)
@@ -162,7 +162,6 @@ void selezionaDati(comandi_e codiceComando, dat *dati, int lenght, FILE *fp){
                 for(m = 0; m < lenght; m++){
                     printf( "%d %s %s %d/%d/%d %s %s %d\n", dati[m].codiceTratta, dati[m].partenza, dati[m].destinazione,
                             dati[m].gg, dati[m].mm, dati[m].aaaa, dati[m].oraPartenza, dati[m].oraArrivo, dati[m].ritardo);
-                    printf("%d\n", dati[m].dataInt);
                 }
                 selezionaDati(codiceComando, dati, lenght, fp);
                 break;
@@ -198,14 +197,14 @@ void minuscolo(char parola[CHAR]){
     }
 }
 
-int ricercaLineare(dat dati[], int lenght, char par[30]){
+void ricercaLineare(dat dati[], int lenght, char par[30]){
     int i = 0, r = lenght - 1;
     for(i = 0; i < r; i++){
-        if(strcmp(dati[i].partenza, par) == 0){
-            return i;
+        if(strncmp(dati[i].partenza, par, strlen(par)) == 0){
+            printf( "%d %s %s %d/%d/%d %s %s %d\n",dati[i].codiceTratta, dati[i].partenza, dati[i].destinazione,
+                    dati[i].gg, dati[i].mm, dati[i].aaaa, dati[i].oraPartenza, dati[i].oraArrivo, dati[i].ritardo);
         }
     }
-    return -1;
 }
 
 int ricercaDicotomica(dat dati[], int lenght, char par[30]){
@@ -241,16 +240,15 @@ dat *leggiFile(int *len, dat *dati) {
     printf("Inserire nome file:");
     scanf("%s", name);
 
-    if ((fp = fopen(name, "r")) == NULL) {
-        printf("Errore apertura file");
-        exit(99);
-    }
+    fp = fopen(name, "r");
 
     dati = malloc(n * sizeof(dat));
 
     while (fscanf(fp, "%d %s %s %d/%d/%d %s %s %d",&d_temp.codiceTratta, d_temp.partenza, d_temp.destinazione,
                   &d_temp.gg, &d_temp.mm, &d_temp.aaaa, d_temp.oraPartenza, d_temp.oraArrivo, &d_temp.ritardo) != EOF) {
         d_temp.dataInt = d_temp.aaaa*10000 + d_temp.mm * 100 + d_temp.gg;
+        minuscolo(d_temp.partenza);
+        minuscolo(d_temp.destinazione);
         if (i == n) {
             n = 2 * n;
             dati = realloc(dati, n * sizeof(dat));
@@ -258,9 +256,7 @@ dat *leggiFile(int *len, dat *dati) {
         dati[i++] = d_temp;
     }
     *len = i;
-
     fclose(fp);
-
     return dati;
 }
 
