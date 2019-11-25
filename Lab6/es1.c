@@ -8,7 +8,6 @@ typedef struct{
 
 int powerset_r(int pos, int *val, int *sol, int k, int start, int count, int E, ve *vertex);
 
-
 int main(void) {
     int i, *sol, *vertici;
     int N, E;
@@ -30,6 +29,7 @@ int main(void) {
     }
 
     powerset_r(0, vertici, sol, N, 0, 0, E, vertex);
+    
     free(vertex);
     free(vertici);
 
