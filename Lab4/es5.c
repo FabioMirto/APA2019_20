@@ -8,7 +8,7 @@
 #define MAXD 1000
 
 typedef enum{
-    r_date, r_partenza, r_capolinea, r_codicetratta, r_ricerca, r_fine, r_err
+    r_date, r_partenza, r_capolinea, r_codicetratta, r_ricerca, r_stampa, r_fine, r_err,
 } comandi_e;
 
 typedef struct{
@@ -27,7 +27,7 @@ typedef struct{
 comandi_e leggiComando (void);
 void minuscolo(char parola[CHAR]);
 void selezionaDati(comandi_e codiceComando, dat *dati, int lenght);
-int ricercaLineare(dat dati[], int lenght, char par[30]);
+void ricercaLineare(dat dati[], int lenght, char par[30]);
 int ricercaDicotomica(dat dati[], int lenght, char par[30]);
 void stampaPuntatore(dat **dati1, int lenght);
 void ordinamento(dat **dati1, int i, int j);
@@ -46,30 +46,12 @@ int main() {
     while(fscanf(fp, "%d %s %s %d/%d/%d %s %s %d",&dati[i].codiceTratta, dati[i].partenza, dati[i].destinazione,
                  &dati[i].gg, &dati[i].mm, &dati[i].aaaa, dati[i].oraPartenza, dati[i].oraArrivo, &dati[i].ritardo) != EOF){
         dati[i].dataInt = dati[i].aaaa * 10000 + dati[i].mm * 100 + dati[i].gg;
+        minuscolo(dati[i].destinazione);
+        minuscolo(dati[i].partenza);
         lenght++;
         i++;
     }
-    for (j = 0; j < lenght; j++) {
-        minuscolo(dati[j].destinazione);
-        minuscolo(dati[j].partenza);
-    }
-    printf("per stampare i contenuti del log\n"
-           "premere 1 per stampare su video\n"
-           "premere 0 per stampare su file\n");
-    scanf("%d", &stamp);
-    if(stamp == 0){
-        for (int k = 0; k < lenght; k++) {
-            fprintf(fp1, "%d %s %s %d/%d/%d %s %s %d\n",dati[k].codiceTratta, dati[k].partenza, dati[k].destinazione,
-                    dati[k].gg, dati[k].mm, dati[k].aaaa, dati[k].oraPartenza, dati[k].oraArrivo, dati[k].ritardo);
-        }
-    } else {
-        for (int k = 0; k < lenght; k++) {
-            printf( "%d %s %s %d/%d/%d %s %s %d\n",dati[k].codiceTratta, dati[k].partenza, dati[k].destinazione,
-                    dati[k].gg, dati[k].mm, dati[k].aaaa, dati[k].oraPartenza, dati[k].oraArrivo, dati[k].ritardo);
-        }
-    }
-
-
+    
     fclose(fp);
     fclose(fp1);
 
@@ -78,11 +60,10 @@ int main() {
     return 0;
 }
 void selezionaDati(comandi_e codiceComando, dat *dati, int lenght){
-    int i = 0, j = 0, l = 0, r = lenght - 1, k = 0, continua = 1, ricerca, m;
+    int i = 0, j = 0, l = 0, r = lenght - 1, k = 0, stamp, continua = 1, ricerca, m;
     int dataInt[lenght];
-    dat *temp;
-    char tempt[30], par[30];
-
+        char par[30];
+    FILE *fp1 = fopen("log.txt", "r");
     dat *date[lenght], *partenza[lenght], *destinazione[lenght], *codice_tratta[lenght];
     for (i = 0; i < lenght; i++) {
         partenza[i] = destinazione[i] = codice_tratta[i] = date[i] = &dati[i];
@@ -146,15 +127,32 @@ void selezionaDati(comandi_e codiceComando, dat *dati, int lenght){
                 scanf("%s", par);
                 minuscolo(par);
                 if(ricerca == 0){
-                    m = ricercaLineare(dati, lenght, par);
-                } else{
-                    m = ricercaDicotomica(dati, lenght, par);
+                    ricercaLineare(dati, lenght, par);
+                } else {
+                    ricercaDicotomica(dati, lenght, par);
                 }
                 if(m != -1){
-                    printf( "%d %s %s %d/%d/%d %s %s %d\n",dati[m].codiceTratta, dati[m].partenza, dati[m].destinazione,
-                            dati[m].gg, dati[m].mm, dati[m].aaaa, dati[m].oraPartenza, dati[m].oraArrivo, dati[m].ritardo);
-                } else{
-                    printf("Stazione di partenza non trovata\n");
+            printf( "%d %s %s %d/%d/%d %s %s %d\n",dati[m].codiceTratta, dati[m].partenza, dati[m].destinazione,
+                    dati[m].gg, dati[m].mm, dati[m].aaaa, dati[m].oraPartenza, dati[m].oraArrivo, dati[m].ritardo);
+                  } else{
+            printf("Stazione di partenza non trovata\n");
+                 }
+                break;
+            case r_stampa:
+                printf("per stampare i contenuti del log\n"
+                       "premere 1 per stampare su video\n"
+                       "premere 0 per stampare su file\n");
+                scanf("%d", &stamp);
+                if(stamp == 0){
+                    for (k = 0; k < lenght; k++) {
+                        fprintf(fp1, "%d %s %s %d/%d/%d %s %s %d\n",dati[k].codiceTratta, dati[k].partenza, dati[k].destinazione,
+                                dati[k].gg, dati[k].mm, dati[k].aaaa, dati[k].oraPartenza, dati[k].oraArrivo, dati[k].ritardo);
+                    }
+                } else {
+                    for (k = 0; k < lenght; k++) {
+                        printf( "%d %s %s %d/%d/%d %s %s %d\n",dati[k].codiceTratta, dati[k].partenza, dati[k].destinazione,
+                                dati[k].gg, dati[k].mm, dati[k].aaaa, dati[k].oraPartenza, dati[k].oraArrivo, dati[k].ritardo);
+                    }
                 }
                 break;
             case r_fine: (continua = 0);
@@ -167,13 +165,11 @@ void selezionaDati(comandi_e codiceComando, dat *dati, int lenght){
 
 comandi_e leggiComando (void){
     comandi_e c;
-    int len = 0;
-    int i = 0;
     char cmd[MAX];
     char tabella[r_fine][MAX] = {
-            "date", "partenza", "capolinea", "codice_tratta", "ricerca"
+            "date", "partenza", "capolinea", "codice_tratta", "ricerca", "stampa"
     };
-    printf("[COMANDO]\nDate Partenza Capolinea Codice_Tratta Ricerca\n"
+    printf("[COMANDO]\nStampa Date Partenza Capolinea Codice_Tratta Ricerca\n"
            "Fine per terminare\n");
     scanf("%s", cmd);
     minuscolo(cmd);
@@ -191,14 +187,14 @@ void minuscolo(char parola[CHAR]){
     }
 }
 
-int ricercaLineare(dat dati[], int lenght, char par[30]){
+void ricercaLineare(dat dati[], int lenght, char par[30]){
     int i = 0, r = lenght - 1;
     for(i = 0; i < r; i++){
         if(strncmp(dati[i].partenza, par, strlen(par)) == 0){
-            return i;
+            printf( "%d %s %s %d/%d/%d %s %s %d\n",dati[i].codiceTratta, dati[i].partenza, dati[i].destinazione,
+                    dati[i].gg, dati[i].mm, dati[i].aaaa, dati[i].oraPartenza, dati[i].oraArrivo, dati[i].ritardo);
         }
     }
-    return -1;
 }
 
 int ricercaDicotomica(dat dati[], int lenght, char par[30]){
@@ -207,14 +203,13 @@ int ricercaDicotomica(dat dati[], int lenght, char par[30]){
     while(i <= r){
         m = (i+r)/2;
         if(strncmp(dati[m].partenza, par, strlen(par)) == 0){
-            return m;
+          return m;
         } else if(strncmp(dati[m].partenza, par, strlen(par)) < 0){
             i = m + 1;
         } else {
             r = m - 1;
         }
     }
-    return -1;
 }
 
 void stampaPuntatore(dat **dati1, int lenght){
