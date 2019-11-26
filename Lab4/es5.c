@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
+#include <assert.h>
 
 #define MAX 20
 #define CHAR 30
@@ -36,11 +37,7 @@ void ordinamento(dat **dati1, int i, int j);
 int main() {
     int i = 0, j, lenght = 0, stamp = 0;
     FILE *fp = fopen("corse.txt", "r");
-    FILE *fp1 = fopen("log.txt", "w");
-    if(fp == NULL){
-        printf("ERRORE NELL'APERTURA DEL FILE");
-        EXIT_FAILURE;
-    }
+   assert(fp != NULL);
     comandi_e codiceComando;
     dat dati[MAXD];
     while(fscanf(fp, "%d %s %s %d/%d/%d %s %s %d",&dati[i].codiceTratta, dati[i].partenza, dati[i].destinazione,
@@ -51,9 +48,8 @@ int main() {
         lenght++;
         i++;
     }
-    
+
     fclose(fp);
-    fclose(fp1);
 
     selezionaDati(codiceComando, dati, lenght);
 
@@ -63,7 +59,7 @@ void selezionaDati(comandi_e codiceComando, dat *dati, int lenght){
     int i = 0, j = 0, l = 0, r = lenght - 1, k = 0, stamp, continua = 1, ricerca, m;
     int dataInt[lenght];
         char par[30];
-    FILE *fp1 = fopen("log.txt", "r");
+    FILE *fp1;
     dat *date[lenght], *partenza[lenght], *destinazione[lenght], *codice_tratta[lenght];
     for (i = 0; i < lenght; i++) {
         partenza[i] = destinazione[i] = codice_tratta[i] = date[i] = &dati[i];
@@ -129,14 +125,15 @@ void selezionaDati(comandi_e codiceComando, dat *dati, int lenght){
                 if(ricerca == 0){
                     ricercaLineare(dati, lenght, par);
                 } else {
-                    ricercaDicotomica(dati, lenght, par);
+                   m = ricercaDicotomica(dati, lenght, par);
+                    if(m != -1){
+                        printf( "%d %s %s %d/%d/%d %s %s %d\n",dati[m].codiceTratta, dati[m].partenza, dati[m].destinazione,
+                                dati[m].gg, dati[m].mm, dati[m].aaaa, dati[m].oraPartenza, dati[m].oraArrivo, dati[m].ritardo);
+                    } else{
+                        printf("Stazione di partenza non trovata\n");
+                    }
                 }
-                if(m != -1){
-            printf( "%d %s %s %d/%d/%d %s %s %d\n",dati[m].codiceTratta, dati[m].partenza, dati[m].destinazione,
-                    dati[m].gg, dati[m].mm, dati[m].aaaa, dati[m].oraPartenza, dati[m].oraArrivo, dati[m].ritardo);
-                  } else{
-            printf("Stazione di partenza non trovata\n");
-                 }
+
                 break;
             case r_stampa:
                 printf("per stampare i contenuti del log\n"
@@ -144,10 +141,13 @@ void selezionaDati(comandi_e codiceComando, dat *dati, int lenght){
                        "premere 0 per stampare su file\n");
                 scanf("%d", &stamp);
                 if(stamp == 0){
+                    fp1 = fopen("log.txt", "w");
+                    assert(fp1 != NULL);
                     for (k = 0; k < lenght; k++) {
                         fprintf(fp1, "%d %s %s %d/%d/%d %s %s %d\n",dati[k].codiceTratta, dati[k].partenza, dati[k].destinazione,
                                 dati[k].gg, dati[k].mm, dati[k].aaaa, dati[k].oraPartenza, dati[k].oraArrivo, dati[k].ritardo);
                     }
+                    fclose(fp1);
                 } else {
                     for (k = 0; k < lenght; k++) {
                         printf( "%d %s %s %d/%d/%d %s %s %d\n",dati[k].codiceTratta, dati[k].partenza, dati[k].destinazione,
