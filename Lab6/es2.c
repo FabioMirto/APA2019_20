@@ -30,13 +30,13 @@ typedef struct node{
 
 void minuscolo(char parola[MAX]);
 comandi_e leggiComando (void);
-Item *ListSearch(link h, char *code);
-void printList(link h, int file);
-Item *SortListDelDate(link *hp, int d1, int d2);
-Item *SortListDel(link *hp,char codice[]);
-Item *ListIn(FILE *fp, int file);
-link SortListIns(link h,Item* val);
-link newNode(link next,Item *val);
+Item *ListSearch(link h, char *code); //ricerca in lista ordinata
+void printList(link h, int file); //stampa lista
+Item *SortListDelDate(link *hp, int d1, int d2); //estrazione ed eliminazione di elementi della lista compresi fra due date
+Item *SortListDel(link *hp,char codice[]);//estrazione ed eliminazione di elementi della lista con un codice
+Item *ListIn(FILE *fp, int file); //lettura lista da file o da tastiera
+link SortListIns(link h,Item* val); //inserimento in lista ordinata
+link newNode(link next,Item *val); //creazione nodo
 void selezionaDati(comandi_e codiceComando, link head);
 
 int main() {
@@ -101,7 +101,7 @@ void selezionaDati(comandi_e codiceComando, link head){
                 scanf("%d/%d/%d %d/%d/%d", &g1, &m1, &a1, &g2, &m2, &a2);
                 dataInt1 = a1*10000 + m1 *100 + g1;
                 dataInt2 = a2*10000 + m2 *100 + g2;
-                if(dataInt1 > dataInt2){
+                if(dataInt1 > dataInt2){ //se dataInt1 > dataInt2 inverto le date per cercare l'elemento della lista compreso tra esse
                     datatmp = dataInt1;
                     dataInt1 = dataInt2;
                     dataInt2 = datatmp;
@@ -188,7 +188,7 @@ void printList(link h, int file){
 Item* SortListDel(link *hp,char codice[]){
     link *xp,t;
     Item *val = NULL;
-    for(xp = hp; (*xp) != NULL ;xp = &((*xp)->next)){
+    for(xp = hp; (*xp) != NULL ; xp = &((*xp)->next)){
         if(strcmp((*xp)->val->codice, codice)==0){
             val = (*xp)->val;
             t = (*xp);
