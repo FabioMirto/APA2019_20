@@ -10,7 +10,7 @@ int powerset_r(int pos, int *val, int *sol, int k, int start, int count, int E, 
 
 int main(void) {
     int i, *sol, *vertici;
-    int N, E;
+    int N, E; //E numero di archi, N numero di vertici
     ve *vertex;
     FILE *fp = fopen("grafo.txt", "r");
 
@@ -32,13 +32,14 @@ int main(void) {
     
     free(vertex);
     free(vertici);
+    free(sol);
 
     return 0;
 }
 
 int powerset_r(int pos, int *val, int *sol, int k, int start, int count, int E, ve *vertex) {
-    int i, j, flag1, flag2;
-    if (start >= k) {
+    int i, j, flag1, flag2;//flag2 controlla se la soluzione, alla fine del ciclo è vera
+    if (start >= k) { //flag1 controlla il valore di sol i-esimo può essere soluzione
         flag2 = 1;
         for (j = 0; j < E && flag2 == 1; j++) {
                 flag1 = 0;
@@ -56,7 +57,7 @@ int powerset_r(int pos, int *val, int *sol, int k, int start, int count, int E, 
         }
         return count + 1;
     }
-    for (i = start; i < k; i++) {
+    for (i = start; i < k; i++) { 
         sol[pos] = val[i];
         count = powerset_r(pos + 1, val, sol, k, i + 1, count, E, vertex);
     }
