@@ -27,7 +27,8 @@ int main(void) {
     for(i = 0; i < N; i++){
         vertici[i] = i;
     }
-
+    
+    printf("Il vertex cover per un grafo di %d archi e %d vertici e'\n", E, N);
     powerset_r(0, vertici, sol, N, 0, 0, E, vertex);
     
     free(vertex);
