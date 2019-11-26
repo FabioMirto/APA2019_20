@@ -46,7 +46,7 @@ int main() {
             printf("%d ", nero[j]);
         }
     }
-    
+
     free(bianco);
     free(nero);
     free2d(m, nr);
