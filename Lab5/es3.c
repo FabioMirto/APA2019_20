@@ -34,10 +34,9 @@ void ordinamento(dat **dati1, int i, int j);
 dat *leggiFile(int *len, dat *dati);
 
 int main() {
-    int m = 0, i, lenght, stamp = 0, verifica = 0;
+    int lenght;
     FILE *fp = fopen("corse.txt", "r");
     FILE *fp1;
-    FILE *fp2;
     if(fp == NULL){
         printf("ERRORE NELL'APERTURA DEL FILE");
         EXIT_FAILURE;
@@ -47,8 +46,10 @@ int main() {
 
     selezionaDati(codiceComando, dati, lenght, fp1);
 
+    fclose(fp);
     return 0;
 }
+
 void selezionaDati(comandi_e codiceComando, dat *dati, int lenght, FILE *fp){
     int i = 0, j = 0, l = 0, r = lenght - 1, k = 0, continua = 1, ricerca = 0, m;
     int dataInt[lenght];
@@ -79,11 +80,11 @@ void selezionaDati(comandi_e codiceComando, dat *dati, int lenght, FILE *fp){
                         fprintf(fp, "%d %s %s %d/%d/%d %s %s %d\n",dati[k].codiceTratta, dati[k].partenza, dati[k].destinazione,
                                 dati[k].gg, dati[k].mm, dati[k].aaaa, dati[k].oraPartenza, dati[k].oraArrivo, dati[k].ritardo);
                     }
+                    fclose(fp);
                 } else {
                     for (k = 0; k < lenght; k++) {
                         printf( "%d %s %s %d/%d/%d %s %s %d\n",dati[k].codiceTratta, dati[k].partenza, dati[k].destinazione,
                                 dati[k].gg, dati[k].mm, dati[k].aaaa, dati[k].oraPartenza, dati[k].oraArrivo, dati[k].ritardo);
-                        printf("%d\n", dati[k].dataInt);
                     }
                 }
                 break;
@@ -153,7 +154,6 @@ void selezionaDati(comandi_e codiceComando, dat *dati, int lenght, FILE *fp){
                         printf("Stazione di partenza non trovata\n");
                     }
                 }
-
                 break;
             case r_lettura :
                 if (dati != NULL)
@@ -213,15 +213,15 @@ int ricercaDicotomica(dat dati[], int lenght, char par[30]){
     while(i <= r){
         m = (i+r)/2;
         if(strcmp(dati[m].partenza, par) == 0){
-            return m;
+           return m;
         } else if(strcmp(dati[m].partenza, par) < 0){
             i = m + 1;
         } else {
             r = m - 1;
         }
     }
-    return -1;
-}
+      return -1;
+   }
 
 void stampaPuntatore(dat **dati1, int lenght){
     int i;
@@ -237,7 +237,7 @@ dat *leggiFile(int *len, dat *dati) {
     char name[20];
     dat d_temp;
     int n = 1, i = 0;
-    printf("Inserire nome file:");
+    printf("Inserire nome file:\n");
     scanf("%s", name);
 
     fp = fopen(name, "r");
