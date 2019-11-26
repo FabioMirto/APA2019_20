@@ -11,7 +11,6 @@ int main() {
     for(i = 0;i < n; i++){
         scanf("%d", &vet[i]);
     }
-
     printf("%d\n", majority(vet, n));
 
     return 0;
@@ -20,7 +19,6 @@ int main() {
 int majority(int *a, int N){
    return maj(a, 0, N-1);
 }
-
 
 int maj (int *a, int l, int r) {
     int countsx = 0, countdx = 0, i;
