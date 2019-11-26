@@ -37,7 +37,7 @@ void ordinamento(dat **dati1, int i, int j);
 int main() {
     int i = 0, j, lenght = 0, stamp = 0;
     FILE *fp = fopen("corse.txt", "r");
-   assert(fp != NULL);
+    assert(fp != NULL);
     comandi_e codiceComando;
     dat dati[MAXD];
     while(fscanf(fp, "%d %s %s %d/%d/%d %s %s %d",&dati[i].codiceTratta, dati[i].partenza, dati[i].destinazione,
