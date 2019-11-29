@@ -15,23 +15,23 @@ int main() {
     clock_t start, end;
     double tempo;
     start=clock();
-    int count = 0;
+    int count = 0, i;
     char *sol, val[4];
-    int z = 13;
-    int s = 17;
-    int r = 20;
-    int t = 12;
+    int z = 10;
+    int s = 10;
+    int r = 10;
+    int t = 9;
     int TOT = s+z+r+t;
 
     g gem[4] = {'Z', z, 'S', s, 'R', r, 'T', t};
 
     sol = calloc(TOT, sizeof(char));
 
-    for (int i = TOT-1; i >= 0; i--) {
+    for (i = 1; i <= TOT; i++) {
         if(princ_molt(0, gem, sol, i, 0, val, 4))
-            printf("%c", sol[i]);
+            printf("%s", sol);
+        printf("\n");
     }
-
     printf("\nTOTALE %lu\n", strlen(sol));
     end=clock();
     tempo=((double)(end-start))/CLOCKS_PER_SEC;
@@ -51,7 +51,7 @@ int princ_molt(int pos, g gem[], char *sol, int k, int count, char *val, int TOT
             count = princ_molt(pos + 1, gem, sol, k, count, val, TOT);
             gem[i].value++;
         }
-        if(gem[i].value > 0 && check(gem[i].car, pos - 1, sol) == 1){
+        if(gem[i].value > 0 && check(gem[i].car, pos - 1, sol)){
             gem[i].value--;
             sol[pos] = gem[i].car;
             if(princ_molt(pos + 1, gem, sol, k, count, val, TOT))
@@ -66,17 +66,13 @@ int princ_molt(int pos, g gem[], char *sol, int k, int count, char *val, int TOT
 
 int check(char car, int i, char *sol){
     if(sol[i] == 'Z' || sol[i] == 'T'){
-        if(car == 'Z' || car == 'R') {
+        if(car == 'Z' || car == 'R')
             return 1;
-        }else {
-            return 0;
-        }
+        return 0;
     } else if(sol[i] == 'S' || sol[i] == 'R'){
-        if(car ==  'S' || car == 'T') {
+        if(car ==  'S' || car == 'T')
             return 1;
-        } else {
-            return 0;
-        }
+        return 0;
         }
     return 0;
 }
