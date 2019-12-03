@@ -1,95 +1,129 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <time.h>
 #include <string.h>
+#include <time.h>
 
 typedef struct {
-    char gemma;
-    int quantita;
-    int val;
+      char gemma;
+      int quantita;
+      int valore;
+      int n;
 } g;
 
 typedef struct {
-    int n;
-} v;
+      char *val;
+      int quantit;
+      int valor;
+} s;
 
-int check(char car, int i, char *sol, int count, int max_rip);
-int princ_molt(int pos, g gem[], char *sol, int k, int count, int val, int TOT, v va[], int max_rip);
+s princ_molt(int pos, g gem[], char *sol, s tmp, int n, int k, int count, int max_rip);
+int pruning(char *sol, int i, char value, int max_rip);
 
 int main() {
-    clock_t start, end;
-    double tempo;
-    start=clock();
-    v va[4] = {0,0,0,0};
-    int count = 0, i, max_rip = 3, val = 0;
-    char *sol;
-    g gem[4] = {'Z', 8, 6, 'S', 5, 8, 'R', 1, 6, 'T', 10, 20};
-    int TOT = 8+5+1+10;
+      clock_t start, end;
+      double tempo;
+      start=clock();
+      int i, max_rip = 5;
+      s b, tmp, bsol;
+      char *sol;
+      g gem[4] = {'Z', 6, 8, 0,
+                  'S', 10, 10, 0,
+                  'R', 6,  25, 0,
+                  'T', 8, 20, 0};
+        int TOT = gem[0].quantita +  gem[1].quantita
+                  + gem[2].quantita + gem[3].quantita;
+          b.quantit = 0;
+          bsol.valor = 0;
+          b.val = malloc(TOT * sizeof(char));
+          bsol.val = malloc(TOT * sizeof(char));
+          sol = malloc(TOT * sizeof(char));
 
-    sol = calloc(TOT, sizeof(char));
 
-    for (i = 1; i <= TOT; i++) {
-        if(princ_molt(0, gem, sol, i, 0, val, 4, va, max_rip))
-            printf("%s", sol);
-        printf("\n");
-    }
-    printf("\nTOTALE %lu\nTOTALE VALORE %d\n", strlen(sol),
-           va[0].n*gem[0].val + va[1].n*gem[1].val + va[2].n*gem[2].val + va[3].n*gem[3].val );
-    end=clock();
-    tempo=((double)(end-start))/CLOCKS_PER_SEC;
-    printf("TEMPO DI ESECUZIONE IN SECONDI %.2f", tempo);
-    return 0;
+
+          for (i = 1; i < TOT; i++) {
+              tmp = princ_molt(0, gem, sol, b, 4, i, 0, max_rip);
+              if (tmp.valor > bsol.valor) {
+                  bsol.valor = tmp.valor;
+                  bsol.quantit = tmp.quantit;
+                  strcpy(bsol.val, tmp.val);
+              }
+          }
+                printf("\nVALORE COLLANA %d GEMME %d\n"
+                 "COLLANA: %s\n", bsol.valor, bsol.quantit,
+                 bsol.val);
+
+            free(b.val);
+            free(bsol.val);
+            free(sol);
+          end=clock();
+          tempo=((double)(end-start))/CLOCKS_PER_SEC;
+          printf("TEMPO DI ESECUZIONE IN SECONDI %.2f", tempo);
+   return 0;
 }
 
-int princ_molt(int pos, g gem[], char *sol, int k, int count, int val, int TOT, v va[], int max_rip) {
-    int i, flag = 0;
-    if (pos >= k) {
-            //val =va[0].n*gem[0].val + va[1].n*gem[1].val + va[2].n*gem[2].val + va[3].n*gem[3].val;
 
-        return 1;
-    }
-    for (i = 0; i < TOT; i++) {
-        if(pos == 0){
-            if(gem[i].gemma == 'Z'){
-                va[i].n += 1;
-            } gem[i].quantita--;
-            sol[pos] = gem[i].gemma;
-            count++;
-            princ_molt(pos + 1, gem, sol, k, count, val, TOT, va, max_rip);
-            gem[i].quantita++;
-        }
-        if(gem[i].quantita > 0 && check(gem[i].gemma, pos - 1, sol, count, max_rip)){
-            if(gem[i].gemma == 'Z'){
-                va[i].n += 1;
-            } gem[i].quantita--;
-            sol[pos] = gem[i].gemma;
-            count++;
-            if(princ_molt(pos + 1, gem, sol, k, count, val, TOT, va, max_rip))
-                flag = 1;
-            gem[i].quantita++;
-            if(flag)
-                return 1;
-        }
-        count = 0;count++;
-    }
-    return 1;
-}
+s princ_molt(int pos, g gem[], char *sol, s tmp, int n, int k, int count, int max_rip) {
+    int i, current_value = 0;
+    gem[0].n = 0;
+    gem[1].n = 0;
+    gem[2].n = 0;
+    gem[3].n = 0;
+      if (pos >= k) {
+          for (i = 0; i < pos; i++) {
+              if (sol[i] == 'Z') {
+                  gem[0].n++;
+              } else if (sol[i] == 'S') {
+                  gem[1].n++;
+              } else if (sol[i] == 'R') {
+                  gem[2].n++;
+              } else if (sol[i] == 'T') {
+                  gem[3].n++;
+              }
+          }
+          if (gem[0].n <= gem[1].n) {
+              for (i = 0; i < k; i++)
+                  current_value = gem[0].valore * gem[0].n + gem[1].valore * gem[1].n +
+                          gem[2].valore *  gem[2].n + gem[3].valore *  gem[3].n;
+              if (tmp.valor < current_value) {
+                  tmp.valor = current_value;
+                  tmp.quantit = gem[0].n + gem[1].n + gem[2].n + gem[3].n;
+                  for (i = 0; i < k; i++)
+                      tmp.val[i] = sol[i];
+              }
+          }
+          return tmp;
+      }
+      for (i = 0; i < n; i++) {
+          if (gem[i].quantita > 0 && pruning(sol, pos - 1, gem[i].gemma, max_rip) == 0) {
+              sol[pos] = gem[i].gemma;
+              gem[i].quantita--;
+              tmp = princ_molt(pos + 1, gem, sol, tmp, n, k, count, max_rip);
+              gem[i].quantita++;
+          }
+      }
+      return tmp;
+  }
 
-int check(char car, int i, char *sol, int count, int max_rip){
-    if(count > max_rip)
-        return 0;
-    return 1;
-        if(n_z > n_s)
-            return 0;
-        return 1;
-    if(sol[i] == 'Z' || sol[i] == 'T'){
-        if(car == 'Z' || car == 'R')
-            return 1;
-        return 0;
-    } else if(sol[i] == 'S' || sol[i] == 'R'){
-        if(car ==  'S' || car == 'T')
-            return 1;
-        return 0;
-        }
-    return 0;
+int pruning(char *sol, int i, char value, int max_rip) {
+      int j, count = 0;
+      if (i + 1 >= max_rip) {
+          for (j = 0; j <= max_rip; j++) {
+              if (sol[i - j] == sol[i])
+                  count++;
+              else
+                  break;
+          }
+          if (count >= max_rip && sol[i] == value)
+              return 1;
+      }
+      if(sol[i] == 'Z' || sol[i] == 'T'){
+          if(value != 'Z' && value != 'R')
+              return 1;
+          return 0;
+      } else if(sol[i] == 'S' || sol[i] == 'R'){
+          if(value !=  'S' && value != 'T')
+              return 1;
+          return 0;
+      }
+      return 0;
 }
