@@ -183,6 +183,9 @@ void ListIn(tabPg_t *tabPg){
         tmp.equip.inUso = 0;
         tabPg->headPg = listInsHead(tabPg->headPg, tmp);
         i++;
+        if(i == 1){
+            tabPg->tailPg = tabPg->headPg;
+        }
     }
     tabPg->nPg = i;
     fclose(fp);
