@@ -1,4 +1,6 @@
+#include "pg.h"
 #include "menu.h"
+
 
 int main() {
     tabPg_t tabPg;

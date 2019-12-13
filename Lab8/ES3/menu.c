@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
+#include "pg.h"
 #include "menu.h"
 
 
@@ -17,7 +18,7 @@ comandi_e leggiComando(void){
     scanf("%s", cmd);
     minuscolo(cmd);
     c = r_newpg;
-    while (c<r_fine && strcmp(cmd,tabella[c])!=0)
+    while (c < r_fine && strcmp(cmd, tabella[c]) != 0)
         c++;
     return (c);
 }
@@ -66,20 +67,19 @@ void selezionaDati(tabPg_t *tabPg, tabInv_t *tabInv, comandi_e codiceComando){
                 codiceComando = leggiComando();
                 break;
             case r_stampainv :
-                printf("Digita il nome di un equipaggiamento per stamparlo\n");
-                scanf("%s", nome);
                 printInv(tabInv, nome);
                 codiceComando = leggiComando();
+                break;
             case r_cercainv :
-                printf("Ricerca di equipaggiamento per nome\n");
-                scanf("%s", nome);
                 searchInv(tabInv, nome);
                 codiceComando = leggiComando();
+                break;
             case r_stamppg :
                 printf("Inserire il codice di un personaggio per stamparlo\n");
                 scanf("%s", code);
                 printList(tabPg, code);
                 codiceComando = leggiComando();
+                break;
             case r_fine :
                 continua = 0;
                 break;

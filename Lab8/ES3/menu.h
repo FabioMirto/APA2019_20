@@ -1,5 +1,3 @@
-#include "inventario.h"
-
 typedef enum {
     r_newpg, r_deletepg, r_addob, r_deleteob, r_statpg, r_stampainv, r_cercainv, r_stamppg, r_err, r_fine
 } comandi_e;

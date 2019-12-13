@@ -2,7 +2,7 @@
 #include <string.h>
 #include <stdio.h>
 #include <ctype.h>
-#include "inventario.h"
+#include "pg.h"
 
 nodoPg_t newNode(pg_t val, nodoPg_t next) {
     nodoPg_t x = malloc(sizeof *x);
@@ -24,12 +24,15 @@ void ListIn(tabPg_t *tabPg){
     FILE *fp = fopen("pg.txt", "r");;
     int i = 0;
     pg_t tmp;
-
+    char codice[6+1], personaggio[MAX+1], classe[MAX+1];
     tabPg->headPg = NULL;
 
-    while (fscanf(fp, "%s %s %s %d %d %d %d %d %d", tmp.codice, tmp.personaggio, tmp.classe, &tmp.stat.hp,
+    while (fscanf(fp, "%s %s %s %d %d %d %d %d %d", codice, personaggio, classe, &tmp.stat.hp,
                   &tmp.stat.mp, &tmp.stat.atk, &tmp.stat.def, &tmp.stat.mag, &tmp.stat.spr) != EOF) {
         tmp.equip.inUso = 0;
+        tmp.codice = strdup(codice);
+        tmp.personaggio = strdup(personaggio);
+        tmp.classe = strdup(classe);
         tabPg->headPg = listInsHead(tabPg->headPg, tmp);
         i++;
         if(i == 1){
@@ -95,9 +98,9 @@ void InsOb(tabPg_t *tabPg, char k[6+1], char ob[MAX+1], tabInv_t *tabInv){
             }
         }
     } else {
-        printf("Codice non trovato\n");
-        return;
-    }
+            printf("Codice non trovato\n");
+            return;
+        }
 }
 
 void DelOb(tabPg_t *tabPg, char k[6+1], char ob[MAX+1], tabInv_t *tabInv){
@@ -196,10 +199,11 @@ void calStat(tabPg_t *tabPg, char k[6+1]){
 
 void printList(tabPg_t *h, char k[6 + 1]) {
     nodoPg_t x;
-    int i;
+    int i, flag = 0;
     if(k != NULL) {
         for (x = h->headPg; x != NULL; x = x->next) {
             if (strcmp(x->val.codice, k) == 0) {
+                flag =1;
                 printf("%s %s %s %d %d %d %d %d %d\n", x->val.codice,
                        x->val.personaggio, x->val.classe,
                        x->val.stat.hp, x->val.stat.mp, x->val.stat.atk,
@@ -232,6 +236,9 @@ void printList(tabPg_t *h, char k[6 + 1]) {
                 }
             }
         }
+    if(flag == 0){
+            printf("Codice non trovato");
+    }
     }
 
 

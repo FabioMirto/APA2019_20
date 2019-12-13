@@ -1,35 +1,11 @@
+#include "inventario.h"
+
 #define MAX 50
 
 typedef struct{
-    int hp;
-    int mp;
-    int atk;
-    int def;
-    int mag;
-    int spr;
-} stat_t;
-
-typedef struct {
-    char nome[MAX];
-    char tipo[MAX];
-    stat_t stat;
-} inv_t;
-
-typedef struct {
-    int inUso;
-    inv_t *vettEq[8];
-} tabEquip_t;
-
-typedef struct {
-    inv_t *vettInv;
-    int nInv;
-    int maxInv;
-} tabInv_t;
-
-typedef struct{
-    char codice[6+1];
-    char personaggio[MAX + 1];
-    char classe[MAX + 1];
+    char *codice;
+    char *personaggio;
+    char *classe;
     tabEquip_t equip;
     stat_t stat;
 } pg_t;
