@@ -35,10 +35,13 @@ int main() {
             }
         }
     }
+
     for (i = 0; i < len; i++) {
         printf("%d %d INTERVALLO: %d\n", v[i].s, v[i].f, v[i].d);
     }
+
     Soluzione(v, len);
+
     return 0;
 }
 
@@ -54,9 +57,11 @@ void Soluzione(att *v, int len){
             sol[i] = v[k[i]];
         }
     }
+
     for(i = 1; i < len; i++){
         d += sol[i].d;
     }
+
     printf("La sequenza di attività che rispetta i criteri ed ha durata maggiore è:\n");
     for (int j = len - 1; j >= 0; j--) {
         if(sol[j].s != 0)
