@@ -9,6 +9,7 @@ typedef struct{
 
 void Soluzione(att *v, int len);
 int check(int len, att *v, int i);
+void DisplaySol(att *sol, int len, int d, int i);
 
 int main() {
     att *v, tmp;
@@ -54,34 +55,37 @@ void Soluzione(att *v, int len){
         if(!((sol[0].s < v[i].f) && (v[i].s < sol[0].f))) {
             k[i] = check(len, v, i);
             if(k[i] != k[i-1])
-            sol[i] = v[k[i]];
+                sol[i] = v[k[i]];
         }
     }
 
     for(i = 1; i < len; i++){
         d += sol[i].d;
     }
-
-    printf("La sequenza di attività che rispetta i criteri ed ha durata maggiore è:\n");
-    for (int j = len - 1; j >= 0; j--) {
-        if(sol[j].s != 0)
-        printf("(%d, %d)\n", sol[j].s, sol[j].f);
-    }
-    printf("con la durata di %d secondi", d);
+    printf("SOLUZIONE:\n");
+    DisplaySol(sol, len, d, 0);
+    printf("CON DURATA %d", d);
 }
 
 int check(int len, att *v, int i){
     int j;
-        for(j = 0; j < len; j++){
-            if(v[i].s == v[j].s && v[i].f == v[j].f)
-                i++;
-            j++;
-            if((v[i].s == v[j].s) || (v[i].f == v[j].f)){
-                if(v[i].d > v[j].d)
-                    return i;
-                else
-                    return j;
-            }
+    for(j = 0; j < len; j++){
+        if(v[i].s == v[j].s && v[i].f == v[j].f)
+            i++;
+        j++;
+        if((v[i].s == v[j].s) || (v[i].f == v[j].f)){
+            if(v[i].d > v[j].d)
+                return i;
+            else
+                return j;
+        }
     }
     return 0;
+}
+void DisplaySol(att *sol, int len, int d, int i) {
+        if (sol[i].s != 0 && i < len) {
+            printf("(%d, %d)\n", sol[i].s, sol[i].f);
+        }
+        if(i < len)
+            DisplaySol(sol, len, d, i+1);
 }
