@@ -8,8 +8,6 @@
 #include "pg.h"
 
 #define MAX 50
-#define N_SCELTE 7
-#define DBG 0
 
 typedef enum {
     r_stampapg, r_stampainv, r_cercapg, r_aggiungipg, r_eliminapg, r_modificaeq, r_err, r_fine
@@ -60,7 +58,6 @@ void selezionaDati(pgList_t pgList, invArray_t invArray, comandi_e codiceComando
     char cmd[7];
     FILE *fp;
     pg_t *pgp, pg;
-    //int len = pg_read(fp, pgp);
     char code[6+1];
     while(continua){
         switch(codiceComando){
