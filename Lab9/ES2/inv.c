@@ -12,9 +12,40 @@ void stat_read(FILE *fp, stat_t *statp){
         }
 }
 
-void stat_print(FILE *fp, stat_t *statp, int soglia) {
-    printf("%d %d %d %d %d %d\n", statp->hp, statp->mp, statp->atk, statp->def, statp->mag,
-           statp->spr);
+void stat_print_pg(FILE *fp, stat_t *statp, int soglia) {
+    if(statp->hp < 0)
+        printf("1 ");
+    else
+        printf("%d ", statp->hp);
+
+    if(statp->mp < 0)
+        printf("1 ");
+    else
+        printf("%d ", statp->mp);
+
+    if(statp->atk < 0)
+        printf("1 ");
+    else
+        printf("%d ", statp->atk);
+
+    if(statp->def < 0)
+        printf("1 ");
+    else
+        printf("%d ", statp->def);
+
+    if(statp->mag < 0)
+        printf("1 ");
+    else
+        printf("%d ", statp->mag);
+
+    if(statp->spr < 0)
+        printf("1 ");
+    else
+        printf("%d\n", statp->spr);
+}
+
+void stat_print(FILE *fp, stat_t *statp, int soglia){
+    printf("%d %d %d %d %d %d\n", statp->hp, statp->mp, statp->atk, statp->def, statp->mag, statp->spr);
 }
 
 void inv_read(FILE *fp, inv_t *invp){
@@ -39,7 +70,7 @@ stat_t inv_getStat(inv_t *invp, int k){
     fscanf(fp, "%d", &len);
     for(i = 0; i < len; i++) {
         if(k == i){
-            return invp[i].stat;
+            return invp->stat;
         }
     }
 }

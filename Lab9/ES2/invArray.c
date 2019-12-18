@@ -50,7 +50,7 @@ inv_t *invArray_getByIndex(invArray_t invArray, int index){
         invArray->vettInv = malloc(sizeof(inv_t));
     for(i = 0; i < invArray->nInv; i++){
         if(index == i)
-            return (inv_t*) &invArray[i];
+            return &invArray->vettInv[i];
     }
 }
 

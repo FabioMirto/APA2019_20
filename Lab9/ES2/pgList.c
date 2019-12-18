@@ -8,7 +8,7 @@ struct pgList_s{
 
 pgList_t pgList_init() {
     pgList_t p = malloc(sizeof(*p));
-    return p;
+
 }
 
 void pgList_free(pgList_t pgList){
@@ -23,6 +23,12 @@ pgList_t pgList_read(FILE *fp, pgList_t pgList){
     while(fscanf(fp, "%s %s %s %d %d %d %d %d %d", tmp.cod, tmp.nome, tmp.classe,
                  &tmp.b_stat.hp, &tmp.b_stat.mp, &tmp.b_stat.atk, &tmp.b_stat.def,
                  &tmp.b_stat.mag, &tmp.b_stat.spr) != EOF){
+        tmp.eq_stat.hp =  0;
+        tmp.eq_stat.mp =  0;
+        tmp.eq_stat.atk =  0;
+        tmp.eq_stat.def =  0;
+        tmp.eq_stat.mag =  0;
+        tmp.eq_stat.spr =  0;
         pgList = listInsHead(pgList, tmp);
         pgList->pg.equip = malloc(sizeof(equipArray_t));
     }
