@@ -18,8 +18,8 @@ typedef struct{
 } stat_t;
 
 typedef struct {
-    char nome[MAX];
-    char tipo[MAX];
+    char *nome;
+    char *tipo;
     stat_t stat;
 } inv_t;
 
@@ -35,9 +35,9 @@ typedef struct {
 } tabInv_t;
 
 typedef struct{
-    char codice[6+1];
-    char personaggio[MAX + 1];
-    char classe[MAX + 1];
+    char *codice;
+    char *personaggio;
+    char *classe;
     tabEquip_t equip;
     stat_t stat;
 } pg_t;
@@ -105,6 +105,7 @@ void minuscolo(char parola[MAX]){
 void selezionaDati(tabPg_t *tabPg, tabInv_t *tabInv, comandi_e codiceComando){
     int i = 0, j = 0, continua = 1, scelta;
     char code[6+1], ob[MAX+1];
+    char cod[6+1], name[MAX], tipo[MAX];
     pg_t tmp;
     while(continua){
         switch(codiceComando){
@@ -116,8 +117,11 @@ void selezionaDati(tabPg_t *tabPg, tabInv_t *tabInv, comandi_e codiceComando){
                        "una cifra nell'intervallo 0-9\n"
                        "Il nome e la classe sono rappresentati privi di spazi (max 50 char)\n"
                        "Tutti i campi sono separati da uno o più spazi\n");
-                scanf("%s %s %s %d %d %d %d %d %d", tmp.codice, tmp.personaggio, tmp.classe, &tmp.stat.hp,
+                scanf("%s %s %s %d %d %d %d %d %d", cod, name, tipo, &tmp.stat.hp,
                       &tmp.stat.mp, &tmp.stat.atk, &tmp.stat.def, &tmp.stat.mag, &tmp.stat.spr);
+                tmp.codice = strdup(cod);
+                tmp.personaggio = strdup(name);
+                tmp.classe = strdup(tipo);
                 tabPg->headPg = listInsHead(tabPg->headPg, tmp);
                 printf("Personaggio aggiunto nella lista\n");
                 printList(tabPg);
@@ -175,12 +179,15 @@ void ListIn(tabPg_t *tabPg){
     FILE *fp = fopen("pg.txt", "r");;
     int i = 0;
     pg_t tmp;
-
+    char codice[6+1], personaggio[MAX+1], classe[MAX+1];
     tabPg->headPg = NULL;
 
-    while (fscanf(fp, "%s %s %s %d %d %d %d %d %d", tmp.codice, tmp.personaggio, tmp.classe, &tmp.stat.hp,
+    while (fscanf(fp, "%s %s %s %d %d %d %d %d %d", codice, personaggio, classe, &tmp.stat.hp,
                   &tmp.stat.mp, &tmp.stat.atk, &tmp.stat.def, &tmp.stat.mag, &tmp.stat.spr) != EOF) {
         tmp.equip.inUso = 0;
+        tmp.codice = strdup(codice);
+        tmp.personaggio = strdup(personaggio);
+        tmp.classe = strdup(classe);
         tabPg->headPg = listInsHead(tabPg->headPg, tmp);
         i++;
         if(i == 1){
@@ -213,15 +220,18 @@ void printList(tabPg_t *h){
 
 void VectIn(tabInv_t *tabInv){
     int i;
+    char nome[MAX+1], tipo[MAX+1];
     FILE *fp = fopen("inventario.txt", "r");
     fscanf(fp, "%d", &tabInv->nInv);
-    tabInv->vettInv = malloc(tabInv->nInv * sizeof(tabInv_t));
+    tabInv->vettInv = (inv_t *) calloc(tabInv->nInv, sizeof(inv_t));
     for(i = 0; i < tabInv->nInv; i++){
-        fscanf(fp, "%s %s %d %d %d %d %d %d", tabInv->vettInv[i].nome,
-               tabInv->vettInv[i].tipo, &tabInv->vettInv[i].stat.hp,
+        fscanf(fp, "%s %s %d %d %d %d %d %d", nome,
+               tipo, &tabInv->vettInv[i].stat.hp,
                &tabInv->vettInv[i].stat.mp, &tabInv->vettInv[i].stat.atk,
                &tabInv->vettInv[i].stat.def, &tabInv->vettInv[i].stat.mag,
                &tabInv->vettInv[i].stat.spr);
+        tabInv->vettInv[i].nome = strdup(nome);
+        tabInv->vettInv[i].tipo = strdup(tipo);
     }
     fclose(fp);
 }
@@ -335,8 +345,8 @@ void calStat(tabPg_t *tabPg, char k[6+1]){
         if (strcmp(x->val.codice, k) == 0) {
             flag = 1;
             if(x->val.equip.inUso == 0){
-                printf("%s %s %s\n"
-                       "HP = %d MP = %d ATK = %d  DEF = %d MAG = %d SPR = %d\n", x->val.codice,
+                printf("%s %s %s "
+                       "%d %d %d %d %d %d\n", x->val.codice,
                        x->val.personaggio, x->val.classe, x->val.stat.hp,
                        x->val.stat.mp, x->val.stat.atk,
                        x->val.stat.def, x->val.stat.mag, x->val.stat.spr);
@@ -348,25 +358,37 @@ void calStat(tabPg_t *tabPg, char k[6+1]){
                     x->val.stat.def += x->val.equip.vettEq[i]->stat.def;
                     x->val.stat.mag += x->val.equip.vettEq[i]->stat.mag;
                     x->val.stat.spr += x->val.equip.vettEq[i]->stat.spr;
-                    if (x->val.stat.hp < 0){
-                        x->val.stat.hp = 0;
-                    }if (x->val.stat.mp < 0){
-                        x->val.stat.mp = 0;
-                    }if (x->val.stat.atk < 0){
-                        x->val.stat.atk = 0;
-                    }if (x->val.stat.def < 0){
-                        x->val.stat.def = 0;
-                    }if (x->val.stat.mag < 0){
-                        x->val.stat.mag = 0;
-                    }if (x->val.stat.spr < 0){
-                        x->val.stat.spr = 0;
-                    }
                 }
-                printf("%s %s %s\n"
-                       "HP = %d MP = %d ATK = %d  DEF = %d MAG = %d SPR = %d\n", x->val.codice,
-                       x->val.personaggio, x->val.classe, x->val.stat.hp,
-                       x->val.stat.mp, x->val.stat.atk,
-                       x->val.stat.def, x->val.stat.mag, x->val.stat.spr);
+                    printf("%s %s %s ", x->val.codice, x->val.personaggio, x->val.classe);
+                    if (x->val.stat.hp < 0)
+                        printf("1 ");
+                    else
+                        printf("%d ", x->val.stat.hp);
+
+                    if (x->val.stat.mp < 0)
+                        printf("1 ");
+                    else
+                        printf("%d ", x->val.stat.mp);
+
+                    if (x->val.stat.atk < 0)
+                        printf("1 ");
+                    else
+                        printf("%d ", x->val.stat.atk);
+
+                    if (x->val.stat.def < 0)
+                        printf("1 ");
+                    else
+                        printf("%d ", x->val.stat.def);
+
+                    if (x->val.stat.mag < 0)
+                        printf("1 ");
+                    else
+                        printf("%d ", x->val.stat.mag);
+
+                    if (x->val.stat.spr < 0)
+                        printf("1\n");
+                    else
+                        printf("%d\n", x->val.stat.spr);
             }
         }
     }
@@ -374,3 +396,4 @@ void calStat(tabPg_t *tabPg, char k[6+1]){
         printf("Codice non trovato!\n");
     }
 }
+
