@@ -9,18 +9,18 @@ typedef struct {
 } g;
 
 int check(char car, int i, char *sol);
-int princ_molt(int pos, g gem[], char *sol, int k, int count, char *val, int TOT);
+int solution(int pos, g gem[], char *sol, int k, int count, char *val, int TOT);
 
 int main() {
     clock_t start, end;
     double tempo;
     start=clock();
-    int count = 0, i;
+    int i;
     char *sol, val[4];
-    int z = 10;
-    int s = 10;
-    int r = 10;
-    int t = 9;
+    int z = 12;
+    int s = 20;
+    int r = 17;
+    int t = 20;
     int TOT = s+z+r+t;
 
     g gem[4] = {'Z', z, 'S', s, 'R', r, 'T', t};
@@ -28,7 +28,7 @@ int main() {
     sol = calloc(TOT, sizeof(char));
 
     for (i = 1; i <= TOT; i++) {
-        if(princ_molt(0, gem, sol, i, 0, val, 4))
+        if(solution(0, gem, sol, i, 0, val, 4))
             printf("%s", sol);
         printf("\n");
     }
@@ -39,7 +39,7 @@ int main() {
     return 0;
 }
 
-int princ_molt(int pos, g gem[], char *sol, int k, int count, char *val, int TOT) {
+int solution(int pos, g gem[], char *sol, int k, int count, char *val, int TOT) {
     int i, flag = 0;
     if (pos >= k) {
         return 1;
@@ -48,13 +48,13 @@ int princ_molt(int pos, g gem[], char *sol, int k, int count, char *val, int TOT
         if(pos == 0){
             gem[i].value--;
             sol[pos] = gem[i].car;
-            count = princ_molt(pos + 1, gem, sol, k, count, val, TOT);
+            count = solution(pos + 1, gem, sol, k, count, val, TOT);
             gem[i].value++;
         }
         if(gem[i].value > 0 && check(gem[i].car, pos - 1, sol)){
             gem[i].value--;
             sol[pos] = gem[i].car;
-            if(princ_molt(pos + 1, gem, sol, k, count, val, TOT))
+            if(solution(pos + 1, gem, sol, k, count, val, TOT))
                 flag = 1;
             gem[i].value++;
             if(flag)
@@ -73,6 +73,6 @@ int check(char car, int i, char *sol){
         if(car ==  'S' || car == 'T')
             return 1;
         return 0;
-        }
+    }
     return 0;
 }
