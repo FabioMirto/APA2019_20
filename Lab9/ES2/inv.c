@@ -50,12 +50,15 @@ void stat_print(FILE *fp, stat_t *statp, int soglia){
 
 void inv_read(FILE *fp, inv_t *invp){
     int i, len;
+    char nome[LEN], tipo[LEN];
     fp = fopen("inventario.txt", "r");
     fscanf(fp, "%d", &len);
     for(i = 0; i < len; i++){
-        fscanf(fp, "%s %s %d %d %d %d %d %d", invp[i].nome, invp[i].tipo,
+        fscanf(fp, "%s %s %d %d %d %d %d %d", nome, tipo,
                &invp[i].stat.hp, &invp[i].stat.mp, &invp[i].stat.atk,
                &invp[i].stat.def, &invp[i].stat.mag, &invp[i].stat.spr);
+        invp[i].nome = strdup(nome);
+        invp[i].tipo = strdup(tipo);
     }
 }
 

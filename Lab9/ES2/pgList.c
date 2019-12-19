@@ -19,10 +19,14 @@ void pgList_free(pgList_t pgList){
 
 pgList_t pgList_read(FILE *fp, pgList_t pgList){
     fp = fopen("pg.txt", "r");
+    char cod[6+1], nome[LEN], classe[LEN];
     pg_t tmp;
-    while(fscanf(fp, "%s %s %s %d %d %d %d %d %d", tmp.cod, tmp.nome, tmp.classe,
+    while(fscanf(fp, "%s %s %s %d %d %d %d %d %d", cod, nome, classe,
                  &tmp.b_stat.hp, &tmp.b_stat.mp, &tmp.b_stat.atk, &tmp.b_stat.def,
                  &tmp.b_stat.mag, &tmp.b_stat.spr) != EOF){
+        tmp.cod = strdup(cod);
+        tmp.nome = strdup(nome);
+        tmp.classe = strdup(classe);
         tmp.eq_stat.hp =  0;
         tmp.eq_stat.mp =  0;
         tmp.eq_stat.atk =  0;
@@ -59,6 +63,7 @@ void pgList_print(FILE *fp, pgList_t pgList, invArray_t invArray){
 
 void pgList_insert(pgList_t pgList, pg_t pg){
     FILE *fp;
+    char cod[6+1], nome[LEN], classe[LEN];
     invArray_t invArray;
     printf("Per aggiungere un nuovo personaggio inserire\n"
            "<codice> <nome> <classe> "
@@ -67,9 +72,12 @@ void pgList_insert(pgList_t pgList, pg_t pg){
            "una cifra nell'intervallo 0-9\n"
            "Il nome e la classe sono rappresentati privi di spazi (max 50 char)\n"
            "Tutti i campi sono separati da uno o più spazi\n");
-    scanf("%s %s %s %d %d %d %d %d %d", pg.cod, pg.nome, pg.classe,
+    scanf("%s %s %s %d %d %d %d %d %d", cod, nome, classe,
           &pg.b_stat.hp, &pg.b_stat.mp, &pg.b_stat.atk, &pg.b_stat.def,
           &pg.b_stat.mag, &pg.b_stat.spr);
+    pg.cod = strdup(cod);
+    pg.nome = strdup(nome);
+    pg.classe = strdup(classe);
     pgList = listInsHead(pgList, pg);
     printf("Personaggio aggiunto nella lista\n");
     pgList->pg.equip = malloc(sizeof(equipArray_t));

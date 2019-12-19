@@ -30,7 +30,7 @@ int main() {
 
 comandi_e leggiComando(void){
     comandi_e c;
-    char cmd[MAX];
+    char cmd[50];
     char tabella[r_fine][MAX] = {
            "stampa_pg", "stampa_inv", "cerca_pg",
            "aggiungi_pg", "elimina_pg", "modifica_eq"
@@ -45,7 +45,7 @@ comandi_e leggiComando(void){
     return (c);
 }
 
-void minuscolo(char parola[MAX]){
+void minuscolo(char parola[50]){
     int i, len;
     len = (int) strlen(parola);
     for(i = 0; i < len; i++){

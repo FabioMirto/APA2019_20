@@ -21,13 +21,18 @@ void invArray_free(invArray_t invArray){
 
 invArray_t invArray_read(FILE *fp, invArray_t invArray) {
     int i = 0;
+    char nome[LEN], tipo[LEN];
     fp = fopen("inventario.txt", "r");
     fscanf(fp, "%d", &invArray->nInv);
     invArray->vettInv = malloc(invArray->nInv * sizeof(inv_t));
-    while (fscanf(fp, "%s %s %d %d %d %d %d %d", invArray->vettInv[i].nome, invArray->vettInv[i].tipo,
+    while (fscanf(fp, "%s %s %d %d %d %d %d %d", nome, tipo,
                   &invArray->vettInv[i].stat.hp, &invArray->vettInv[i].stat.mp, &invArray->vettInv[i].stat.atk,
-                  &invArray->vettInv[i].stat.def, &invArray->vettInv[i].stat.mag, &invArray->vettInv[i].stat.spr) != EOF)
+                  &invArray->vettInv[i].stat.def, &invArray->vettInv[i].stat.mag, &invArray->vettInv[i].stat.spr) != EOF){
+        invArray->vettInv[i].nome = strdup(nome);
+        invArray->vettInv[i].tipo = strdup(tipo);
         i++;
+    }
+
     return invArray;
 }
 

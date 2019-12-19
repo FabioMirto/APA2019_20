@@ -19,10 +19,14 @@ pg_t *pg_init(){
 
 int pg_read(FILE *fp, pg_t *pgp){
     fp = fopen("pg.txt", "r");
+    char cod[6+1], nome[LEN], classe[LEN];
     int i = 0, n = 1;
-    while(fscanf(fp, "%s %s %s %d %d %d %d %d %d", pgp[i].cod, pgp[i].nome, pgp[i].classe,
+    while(fscanf(fp, "%s %s %s %d %d %d %d %d %d", cod, nome, classe,
                  &pgp[i].b_stat.hp, &pgp[i].b_stat.mp, &pgp[i].b_stat.atk, &pgp[i].b_stat.def,
                  &pgp[i].b_stat.mag, &pgp[i].b_stat.spr) == 9){
+        pgp[i].cod = strdup(cod);
+        pgp[i].nome = strdup(nome);
+        pgp[i].classe = strdup(classe);
         i++;
     }
     return i;

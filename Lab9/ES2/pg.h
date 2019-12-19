@@ -10,9 +10,9 @@
 /* quasi ADT personaggio; si noti che si tratta di un composto con riferimento 
 a un equipArray di proprieta' */
 typedef struct pg_s {
-  char cod[LEN];
-  char nome[LEN];
-  char classe[LEN];
+  char *cod;
+  char *nome;
+  char *classe;
   stat_t b_stat, eq_stat;
   equipArray_t equip;
 } pg_t;
